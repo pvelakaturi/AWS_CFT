@@ -1,0 +1,181 @@
+AWSTemplateFormatVersion: 2010-09-09
+
+Metadata:
+  AWS::CloudFormation::Interface:
+    ParameterGroups:
+      -
+        Label:
+          default: "Environment Type"
+        Parameters:
+          - EnvType
+      -
+        Label:
+          default: "VPC"
+        Parameters:
+          - VpcId
+
+    ParameterLabels:
+      VpcId:
+        default: "Which VPC should this template be deployed to?"
+
+      EnvType:
+        default: Select a Environment Type
+
+########################### PARAMETERS ##################################
+
+Parameters:
+  VpcId:
+    Type: AWS::EC2::VPC::Id
+
+
+  EnvType:
+    Type: String
+    Default: dev
+    AllowedValues: [dev, sit, sit1, prod, pre-prod, uat, trn]
+
+
+
+########################### RESOURCES ##################################
+
+Resources:
+
+######################## CUSTOMER HTTP SERVER SECURITY GROUP #########################
+
+  CustomerHTTPServerSG:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Security Group for Customer HTTP Server in MarketPlace VPC. By default allows all outbound traffic.
+      GroupName: !Join ["_", [!Ref EnvType, marketplace_customerhttpserver_sg]]
+      SecurityGroupIngress:
+        - IpProtocol: TCP
+          FromPort: 22
+          ToPort: 22
+          CidrIp: 0.0.0.0/0
+      VpcId: !Ref VpcId
+      Tags:
+      - Key: Name
+        Value: CustomerHTTPServer
+
+########################## WORKER PORTAL SECURITY GROUP #############################
+
+  WorkerPortalSG:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Security Group for Worker Portal in MarketPlace VPC. By default allows all outbound traffic.
+      GroupName: !Join ["_", [!Ref EnvType, marketplace_workerportal_sg]]
+      SecurityGroupIngress:
+        - IpProtocol: TCP
+          FromPort: 22
+          ToPort: 22
+          CidrIp: 0.0.0.0/0
+      VpcId: !Ref VpcId
+      Tags:
+      - Key: Name
+        Value: WorkerPortal
+
+###################### CUSTOMER PORTAL SECURITY GROUP ##########################
+
+  CustomerPortalSG:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Security Group for Customer Portal in MarketPlace VPC. By default allows all outbound traffic.
+      GroupName: !Join ["_", [!Ref EnvType, marketplace_customerportal_sg]]
+      SecurityGroupIngress:
+        - IpProtocol: TCP
+          FromPort: 22
+          ToPort: 22
+          CidrIp: 0.0.0.0/0
+      VpcId: !Ref VpcId
+      Tags:
+      - Key: Name
+        Value: CustomerPortal
+
+########################## BATCH SECURITY GROUP ##############################
+
+  BatchSG:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Security Group for Batch in MarketPlace VPC. By default allows all outbound traffic.
+      GroupName: !Join ["_", [!Ref EnvType, marketplace_batch_sg]]
+      SecurityGroupIngress:
+        - IpProtocol: TCP
+          FromPort: 22
+          ToPort: 22
+          CidrIp: 0.0.0.0/0
+      VpcId: !Ref VpcId
+      Tags:
+      - Key: Name
+        Value: Batch
+
+##################### SFTP SECURITY GROUP ##########################
+
+  SFTPSG:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Security Group for SFTP in MarketPlace VPC. By default allows all outbound traffic.
+      GroupName: !Join ["_", [!Ref EnvType, marketplace_sftp_sg]]
+      SecurityGroupIngress:
+        - IpProtocol: TCP
+          FromPort: 22
+          ToPort: 22
+          CidrIp: 0.0.0.0/0
+      VpcId: !Ref VpcId
+      Tags:
+      - Key: Name
+        Value: SFTP
+
+########################## ENTERPRISEDB SECURITY GROUP ##############################
+
+  EnterpriseDBSG:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Security Group for EnterpriseDB in MarketPlace VPC. By default allows all outbound traffic.
+      GroupName: !Join ["_", [!Ref EnvType, marketplace_enterprisedb_sg]]
+      SecurityGroupIngress:
+        - IpProtocol: TCP
+          FromPort: 22
+          ToPort: 22
+          CidrIp: 0.0.0.0/0
+      VpcId: !Ref VpcId
+      Tags:
+      - Key: Name
+        Value: EnterpriseDB
+
+########################### OUTPUTS ##################################
+
+Outputs:
+  CustomerHTTPServerSG:
+    Description: Security Group Id for Customer HTTP Server in MarketPlace VPC
+    Value: !Ref CustomerHTTPServerSG
+    Export:
+      Name: !Sub ${AWS::StackName}-CustomerHTTPServer
+
+  WorkerPortalSG:
+    Description: Security Group Id for Worker Portal in MarketPlace VPC
+    Value: !Ref WorkerPortalSG
+    Export:
+      Name: !Sub ${AWS::StackName}-WorkerPortal
+
+  CustomerPortalSG:
+    Description: Security Group Id for Customer Portal in MarketPlace VPC
+    Value: !Ref CustomerPortalSG
+    Export:
+      Name: !Sub ${AWS::StackName}-CustomerPortal
+
+  BatchSG:
+    Description: Security Group Id for Batch in MarketPlace VPC
+    Value: !Ref BatchSG
+    Export:
+      Name: !Sub ${AWS::StackName}-Batch
+
+  SFTPSG:
+    Description: Security Group Id for SFTP in MarketPlace VPC
+    Value: !Ref SFTPSG
+    Export:
+      Name: !Sub ${AWS::StackName}-SFTP
+
+  EnterpriseDBSG:
+    Description: Security Group Id for EnterpriseDB in MarketPlace VPC
+    Value: !Ref EnterpriseDBSG
+    Export:
+      Name: !Sub ${AWS::StackName}-EnterpriseDB

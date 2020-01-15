@@ -1,0 +1,619 @@
+AWSTemplateFormatVersion: 2010-09-09
+
+Metadata:
+  AWS::CloudFormation::Interface:
+    ParameterGroups:
+      -
+        Label:
+          default: "Env Type & VPC"
+        Parameters:
+          - EnvType
+          - VpcId
+      -
+        Label:
+          default: "Forge Rock Security Group"
+        Parameters:
+          - ForgeRockSGIpProtocol
+          - ForgeRockSGFromPort
+          - ForgeRockSGToPort
+          - ForgeRockSGCidrIp
+      -
+        Label:
+          default: "ESB Security Group"
+        Parameters:
+          - ESBSGIpProtocol
+          - ESBSGFromPort
+          - ESBSGToPort
+          - ESBSGCidrIp
+      -
+        Label:
+          default: "EMPI Security Group"
+        Parameters:
+          - EMPISGIpProtocol
+          - EMPISGFromPort
+          - EMPISGToPort
+          - EMPISGCidrIp
+      -
+        Label:
+          default: "ETL Security Group"
+        Parameters:
+          - ETLSGIpProtocol
+          - ETLSGFromPort
+          - ETLSGToPort
+          - ETLSGCidrIp
+      -
+        Label:
+          default: "Experian Security Group"
+        Parameters:
+          - ExperianSGIpProtocol
+          - ExperianSGFromPort
+          - ExperianSGToPort
+          - ExperianSGCidrIp
+      -
+        Label:
+          default: "Bi Publisher Security Group"
+        Parameters:
+          - BiPublisherSGIpProtocol
+          - BiPublisherSGFromPort
+          - BiPublisherSGToPort
+          - BiPublisherSGCidrIp
+      -
+        Label:
+          default: "Oracle OPA Security Group"
+        Parameters:
+          - OracleOPASGIpProtocol
+          - OracleOPASGFromPort
+          - OracleOPASGToPort
+          - OracleOPASGCidrIp
+      -
+        Label:
+          default: "SailPoint Security Group"
+        Parameters:
+          - SailPointSGIpProtocol
+          - SailPointSGFromPort
+          - SailPointSGToPort
+          - SailPointSGCidrIp
+      -
+        Label:
+          default: "Splunk Security Group"
+        Parameters:
+          - SplunkSGIpProtocol
+          - SplunkSGFromPort
+          - SplunkSGToPort
+          - SplunkSGCidrIp
+      -
+        Label:
+          default: "AEM Security Group"
+        Parameters:
+          - AEMSGIpProtocol
+          - AEMSGFromPort
+          - AEMSGToPort
+          - AEMSGCidrIp
+    ParameterLabels:
+      VpcId:
+        default: "Which VPC should this template be deployed to?"
+
+      EnvType:
+        default: Select a Environment Type
+
+      ForgeRockSGIpProtocol:
+        default: 'Ip Protocol:'
+      ForgeRockSGFromPort:
+        default: 'FromPort:'
+      ForgeRockSGToPort:
+        default: 'ToPort:'
+      ForgeRockSGCidrIp:
+        default: 'CidrIp:'
+
+      ESBSGIpProtocol:
+        default: 'Ip Protocol:'
+      ESBSGFromPort:
+        default: 'FromPort:'
+      ESBSGToPort:
+        default: 'ToPort:'
+      ESBSGCidrIp:
+        default: 'CidrIp:'
+
+      EMPISGIpProtocol:
+        default: 'Ip Protocol:'
+      EMPISGFromPort:
+        default: 'FromPort:'
+      EMPISGToPort:
+        default: 'ToPort:'
+      EMPISGCidrIp:
+        default: 'CidrIp:'
+
+      ETLSGIpProtocol:
+        default: 'Ip Protocol:'
+      ETLSGFromPort:
+        default: 'FromPort:'
+      ETLSGToPort:
+        default: 'ToPort:'
+      ETLSGCidrIp:
+        default: 'CidrIp:'
+
+      ExperianSGIpProtocol:
+        default: 'Ip Protocol:'
+      ExperianSGFromPort:
+        default: 'FromPort:'
+      ExperianSGToPort:
+        default: 'ToPort:'
+      ExperianSGCidrIp:
+        default: 'CidrIp:'
+
+      BiPublisherSGIpProtocol:
+        default: 'Ip Protocol:'
+      BiPublisherSGFromPort:
+        default: 'FromPort:'
+      BiPublisherSGToPort:
+        default: 'ToPort:'
+      BiPublisherSGCidrIp:
+        default: 'CidrIp:'
+
+      OracleOPASGIpProtocol:
+        default: 'Ip Protocol:'
+      OracleOPASGFromPort:
+        default: 'FromPort:'
+      OracleOPASGToPort:
+        default: 'ToPort:'
+      OracleOPASGCidrIp:
+        default: 'CidrIp:'
+
+      SailPointSGIpProtocol:
+        default: 'Ip Protocol:'
+      SailPointSGFromPort:
+        default: 'FromPort:'
+      SailPointSGToPort:
+        default: 'ToPort:'
+      SailPointSGCidrIp:
+        default: 'CidrIp:'
+
+      SplunkSGIpProtocol:
+        default: 'Ip Protocol:'
+      SplunkSGFromPort:
+        default: 'FromPort:'
+      SplunkSGToPort:
+        default: 'ToPort:'
+      SplunkSGCidrIp:
+        default: 'CidrIp:'
+
+      AEMSGIpProtocol:
+        default: 'Ip Protocol:'
+      AEMSGFromPort:
+        default: 'FromPort:'
+      AEMSGToPort:
+        default: 'ToPort:'
+      AEMSGCidrIp:
+        default: 'CidrIp:'
+
+
+########################### PARAMETERS ##################################
+
+Parameters:
+  VpcId:
+    Type: AWS::EC2::VPC::Id
+
+
+  EnvType:
+    Type: String
+    Default: dev
+    AllowedValues: [dev, sit, sit1, prod, pre-prod, uat, trn]
+
+
+
+######################## FORGE ROCK PARAMETERS ############################
+
+  ForgeRockSGIpProtocol:
+    Type: String
+
+  ForgeRockSGFromPort:
+    Type: String
+
+  ForgeRockSGToPort:
+    Type: String
+
+  ForgeRockSGCidrIp:
+    Type: String
+    MinLength: '9'
+    MaxLength: '18'
+    Default: 0.0.0.0/0
+    AllowedPattern: '(\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})/(\d{1,2})'
+
+######################## ESB PARAMETERS ############################
+
+  ESBSGIpProtocol:
+    Type: String
+
+  ESBSGFromPort:
+    Type: String
+
+  ESBSGToPort:
+    Type: String
+
+  ESBSGCidrIp:
+    Type: String
+    MinLength: '9'
+    MaxLength: '18'
+    Default: 0.0.0.0/0
+    AllowedPattern: '(\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})/(\d{1,2})'
+
+########################### EMPI PARAMETERS ###############################
+
+  EMPISGIpProtocol:
+    Type: String
+
+  EMPISGFromPort:
+    Type: String
+
+  EMPISGToPort:
+    Type: String
+
+  EMPISGCidrIp:
+    Type: String
+    MinLength: '9'
+    MaxLength: '18'
+    Default: 0.0.0.0/0
+    AllowedPattern: '(\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})/(\d{1,2})'
+
+############################## ETL PARAMETERS #############################
+
+  ETLSGIpProtocol:
+    Type: String
+
+  ETLSGFromPort:
+    Type: String
+
+  ETLSGToPort:
+    Type: String
+
+  ETLSGCidrIp:
+    Type: String
+    MinLength: '9'
+    MaxLength: '18'
+    Default: 0.0.0.0/0
+    AllowedPattern: '(\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})/(\d{1,2})'
+
+######################## EXPERIAN PARAMETERS ############################
+
+  ExperianSGIpProtocol:
+    Type: String
+
+  ExperianSGFromPort:
+    Type: String
+
+  ExperianSGToPort:
+    Type: String
+
+  ExperianSGCidrIp:
+    Type: String
+    MinLength: '9'
+    MaxLength: '18'
+    Default: 0.0.0.0/0
+    AllowedPattern: '(\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})/(\d{1,2})'
+
+############################ BI PUBLISHER PARAMETERS ################################
+
+  BiPublisherSGIpProtocol:
+    Type: String
+
+  BiPublisherSGFromPort:
+    Type: String
+
+  BiPublisherSGToPort:
+    Type: String
+
+  BiPublisherSGCidrIp:
+    Type: String
+    MinLength: '9'
+    MaxLength: '18'
+    Default: 0.0.0.0/0
+    AllowedPattern: '(\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})/(\d{1,2})'
+
+############################## Oracle OPA PARAMETERS ################################
+
+  OracleOPASGIpProtocol:
+    Type: String
+
+  OracleOPASGFromPort:
+    Type: String
+
+  OracleOPASGToPort:
+    Type: String
+
+  OracleOPASGCidrIp:
+    Type: String
+    MinLength: '9'
+    MaxLength: '18'
+    Default: 0.0.0.0/0
+    AllowedPattern: '(\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})/(\d{1,2})'
+
+########################### SAILPOINT PARAMETERS ###############################
+
+  SailPointSGIpProtocol:
+    Type: String
+
+  SailPointSGFromPort:
+    Type: String
+
+  SailPointSGToPort:
+    Type: String
+
+  SailPointSGCidrIp:
+    Type: String
+    MinLength: '9'
+    MaxLength: '18'
+    Default: 0.0.0.0/0
+    AllowedPattern: '(\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})/(\d{1,2})'
+
+############################ SPLUNK PARAMETERS ################################
+
+  SplunkSGIpProtocol:
+    Type: String
+
+  SplunkSGFromPort:
+    Type: String
+
+  SplunkSGToPort:
+    Type: String
+
+  SplunkSGCidrIp:
+    Type: String
+    MinLength: '9'
+    MaxLength: '18'
+    Default: 0.0.0.0/0
+    AllowedPattern: '(\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})/(\d{1,2})'
+
+############################ AEM PARAMETERS ################################
+
+  AEMSGIpProtocol:
+    Type: String
+
+  AEMSGFromPort:
+    Type: String
+
+  AEMSGToPort:
+    Type: String
+
+  AEMSGCidrIp:
+    Type: String
+    MinLength: '9'
+    MaxLength: '18'
+    Default: 0.0.0.0/0
+    AllowedPattern: '(\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})/(\d{1,2})'
+
+########################### RESOURCES ##################################
+
+Resources:
+
+######################## FORGE ROCK SECURITY GROUP #########################
+
+  ForgeRockSG:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Security Group for Forge Rock in MarketPlace VPC. By default allows all outbound traffic.
+      GroupName: !Join ["_", [!Ref EnvType, marketplace_forgerock_sg]]
+      SecurityGroupIngress:
+        - IpProtocol: !Ref ForgeRockSGIpProtocol
+          FromPort: !Ref ForgeRockSGFromPort
+          ToPort: !Ref ForgeRockSGToPort
+          CidrIp: !Ref ForgeRockSGCidrIp
+      VpcId: !Ref VpcId
+      Tags:
+      - Key: Name
+        Value: ForgeRock
+
+########################## ESB SECURITY GROUP #############################
+
+  ESBSG:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Security Group for ESB in MarketPlace VPC. By default allows all outbound traffic.
+      GroupName: !Join ["_", [!Ref EnvType, marketplace_esb_sg]]
+      SecurityGroupIngress:
+        - IpProtocol: !Ref ESBSGIpProtocol
+          FromPort: !Ref ESBSGFromPort
+          ToPort: !Ref ESBSGToPort
+          CidrIp: !Ref ESBSGCidrIp
+      VpcId: !Ref VpcId
+      Tags:
+      - Key: Name
+        Value: ESB
+
+########################## EMPI SECURITY GROUP ##############################
+
+  EMPISG:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Security Group for EMPI in MarketPlace VPC. By default allows all outbound traffic.
+      GroupName: !Join ["_", [!Ref EnvType, marketplace_empi_sg]]
+      SecurityGroupIngress:
+        - IpProtocol: !Ref EMPISGIpProtocol
+          FromPort: !Ref EMPISGFromPort
+          ToPort: !Ref EMPISGToPort
+          CidrIp: !Ref EMPISGCidrIp
+      VpcId: !Ref VpcId
+      Tags:
+      - Key: Name
+        Value: EMPI
+
+########################## ETL SECURITY GROUP ##############################
+
+  ETLSG:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Security Group for ETL in MarketPlace VPC. By default allows all outbound traffic.
+      GroupName: !Join ["_", [!Ref EnvType, marketplace_etl_sg]]
+      SecurityGroupIngress:
+        - IpProtocol: !Ref ETLSGIpProtocol
+          FromPort: !Ref ETLSGFromPort
+          ToPort: !Ref ETLSGToPort
+          CidrIp: !Ref ETLSGCidrIp
+      VpcId: !Ref VpcId
+      Tags:
+      - Key: Name
+        Value: ETL
+
+##################### Experian SECURITY GROUP ##########################
+
+  ExperianSG:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Security Group for Experian in MarketPlace VPC. By default allows all outbound traffic.
+      GroupName: !Join ["_", [!Ref EnvType, marketplace_experian_sg]]
+      SecurityGroupIngress:
+        - IpProtocol: !Ref ExperianSGIpProtocol
+          FromPort: !Ref ExperianSGFromPort
+          ToPort: !Ref ExperianSGToPort
+          CidrIp: !Ref ExperianSGCidrIp
+      VpcId: !Ref VpcId
+      Tags:
+      - Key: Name
+        Value: Experian
+
+########################## BI PUBLISHER SECURITY GROUP ##############################
+
+  BiPublisherSG:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Security Group for Bi Publisher in MarketPlace VPC. By default allows all outbound traffic.
+      GroupName: !Join ["_", [!Ref EnvType, marketplace_bipublisher_sg]]
+      SecurityGroupIngress:
+        - IpProtocol: !Ref BiPublisherSGIpProtocol
+          FromPort: !Ref BiPublisherSGFromPort
+          ToPort: !Ref BiPublisherSGToPort
+          CidrIp: !Ref BiPublisherSGCidrIp
+      VpcId: !Ref VpcId
+      Tags:
+      - Key: Name
+        Value: Bi Publisher
+
+########################## Oracle OPA SECURITY GROUP ##############################
+
+  OracleOPASG:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Security Group for Oracle OPA in MarketPlace VPC. By default allows all outbound traffic.
+      GroupName: !Join ["_", [!Ref EnvType, marketplace_oracleopa_sg]]
+      SecurityGroupIngress:
+        - IpProtocol: !Ref OracleOPASGIpProtocol
+          FromPort: !Ref OracleOPASGFromPort
+          ToPort: !Ref OracleOPASGToPort
+          CidrIp: !Ref OracleOPASGCidrIp
+      VpcId: !Ref VpcId
+      Tags:
+      - Key: Name
+        Value: Oracle OPA
+
+####################### SAIL POINT SECURITY GROUP #############################
+
+  SailPointSG:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Security Group for SailPoint in MarketPlace VPC. By default allows all outbound traffic.
+      GroupName: !Join ["_", [!Ref EnvType, marketplace_sailpoint_sg]]
+      SecurityGroupIngress:
+        - IpProtocol: !Ref SailPointSGIpProtocol
+          FromPort: !Ref SailPointSGFromPort
+          ToPort: !Ref SailPointSGToPort
+          CidrIp: !Ref SailPointSGCidrIp
+      VpcId: !Ref VpcId
+      Tags:
+      - Key: Name
+        Value: SailPoint
+
+######################## SPLUNK SECURITY GROUP ############################
+
+  SplunkSG:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Security Group for Splunk 1 in MarketPlace VPC. By default allows all outbound traffic.
+      GroupName: !Join ["_", [!Ref EnvType, marketplace_splunk_sg]]
+      SecurityGroupIngress:
+        - IpProtocol: !Ref SplunkSGIpProtocol
+          FromPort: !Ref SplunkSGFromPort
+          ToPort: !Ref SplunkSGToPort
+          CidrIp: !Ref SplunkSGCidrIp
+      VpcId: !Ref VpcId
+      Tags:
+      - Key: Name
+        Value: Splunk
+
+  ########################## AEM SECURITY GROUP ##############################
+
+  AEMSG:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Security Group for AEM in MarketPlace VPC. By default allows all outbound traffic.
+      GroupName: !Join ["_", [!Ref EnvType, marketplace_AEM_sg]]
+      SecurityGroupIngress:
+        - IpProtocol: !Ref AEMSGIpProtocol
+          FromPort: !Ref AEMSGFromPort
+          ToPort: !Ref AEMSGToPort
+          CidrIp: !Ref AEMSGCidrIp
+      VpcId: !Ref VpcId
+      Tags:
+      - Key: Name
+        Value: AEM
+
+########################### OUTPUTS ##################################
+
+Outputs:
+  ForgeRockSG:
+    Description: Security Group Id for Forge Rock in MarketPlace VPC
+    Value: !Ref ForgeRockSG
+    Export:
+      Name: !Sub ${AWS::StackName}-ForgeRock
+
+  ESBSG:
+    Description: Security Group Id for ESB in MarketPlace VPC
+    Value: !Ref ESBSG
+    Export:
+      Name: !Sub ${AWS::StackName}-ESB
+
+  EMPISG:
+    Description: Security Group Id for EMPI in MarketPlace VPC
+    Value: !Ref EMPISG
+    Export:
+      Name: !Sub ${AWS::StackName}-EMPI
+
+  ETLSG:
+    Description: Security Group Id for ETL in MarketPlace VPC
+    Value: !Ref ETLSG
+    Export:
+      Name: !Sub ${AWS::StackName}-ETL
+
+  ExperianSG:
+    Description: Security Group Id for Experian in MarketPlace VPC
+    Value: !Ref ExperianSG
+    Export:
+      Name: !Sub ${AWS::StackName}-Experian
+
+  BiPublisherSG:
+    Description: Security Group Id for Bi Publisher in MarketPlace VPC
+    Value: !Ref BiPublisherSG
+    Export:
+      Name: !Sub ${AWS::StackName}-BiPublisher
+
+  OracleOPASG:
+    Description: Security Group Id for Oracle OPA in MarketPlace VPC
+    Value: !Ref OracleOPASG
+    Export:
+      Name: !Sub ${AWS::StackName}-OracleOPA
+
+  SailPointSG:
+    Description: Security Group Id for SailPoint in MarketPlace VPC
+    Value: !Ref SailPointSG
+    Export:
+      Name: !Sub ${AWS::StackName}-SailPoint
+
+  SplunkSG:
+    Description: Security Group Id for Splunk 1 in MarketPlace VPC
+    Value: !Ref SplunkSG
+    Export:
+      Name: !Sub ${AWS::StackName}-Splunk
+
+  AEMSG:
+    Description: Security Group Id for AEM in MarketPlace VPC
+    Value: !Ref AEMSG
+    Export:
+      Name: !Sub ${AWS::StackName}-AEM

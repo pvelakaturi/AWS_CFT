@@ -16,6 +16,24 @@ Parameters:
       Description: The IP address range that can be used to SSH to the EC2 instances
       ConstraintDescription: Must be a valid IP CIDR range orm x.x.x.x/x
 
+    InternalASubnetCIDR:
+      Type: String
+      MinLength: '9'
+      MaxLength: '18'
+      Default: 0.0.0.0/0
+      AllowedPattern: '(\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})/(\d{1,2})'
+      Description: CIDR IP for Subnet A
+      ConstraintDescription: Must be a valid IP CIDR range orm x.x.x.x/x
+
+    InternalBSubnetCIDR:
+      Type: String
+      MinLength: '9'
+      MaxLength: '18'
+      Default: 0.0.0.0/0
+      AllowedPattern: '(\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})/(\d{1,2})'
+      Description: CIDR IP for Subnet B
+      ConstraintDescription: Must be a valid IP CIDR range orm x.x.x.x/x
+
 Resources:
   VPC:
     Type: AWS::EC2::VPC
@@ -46,7 +64,7 @@ Resources:
     Type: AWS::EC2::Subnet
     Properties:
       VpcId: !Ref VPC
-      CidrBlock: 10.1.50.0/24
+      CidrBlock: !Ref InternalASubnetCIDR
       AvailabilityZone: !Select [ 0, !GetAZs '' ]
       Tags:
       - Key: Name
@@ -56,7 +74,7 @@ Resources:
     Type: AWS::EC2::Subnet
     Properties:
       VpcId: !Ref VPC
-      CidrBlock: 10.1.60.0/24
+      CidrBlock: !Ref InternalBSubnetCIDR
       AvailabilityZone: !Select [ 1, !GetAZs '' ]
       Tags:
       - Key: Name

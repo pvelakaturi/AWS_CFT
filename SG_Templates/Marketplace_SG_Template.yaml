@@ -1,0 +1,271 @@
+AWSTemplateFormatVersion: 2010-09-09
+
+Metadata:
+  AWS::CloudFormation::Interface:
+    ParameterGroups:
+      -
+        Label:
+          default: "Environment Type"
+        Parameters:
+          - EnvType
+      -
+        Label:
+          default: "VPC"
+        Parameters:
+          - VpcId
+
+    ParameterLabels:
+      VpcId:
+        default: "Which VPC should this template be deployed to?"
+
+      EnvType:
+        default: Select a Environment Type
+
+########################### PARAMETERS ##################################
+
+Parameters:
+  VpcId:
+    Type: AWS::EC2::VPC::Id
+
+
+  EnvType:
+    Type: String
+    Default: dev
+    AllowedValues: [dev, sit, sit1, prod, pre-prod, uat, trn]
+
+########################### RESOURCES ##################################
+
+Resources:
+
+######################## FORGE ROCK SECURITY GROUP #########################
+
+  ForgeRockSG:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Security Group for Forge Rock in MarketPlace VPC. By default allows all outbound traffic.
+      GroupName: !Join ["_", [!Ref EnvType, marketplace_forgerock_sg]]
+      SecurityGroupIngress:
+        - IpProtocol: TCP
+          FromPort: 22
+          ToPort: 22
+          CidrIp: 0.0.0.0/0
+      VpcId: !Ref VpcId
+      Tags:
+      - Key: Name
+        Value: ForgeRock
+
+########################## ESB SECURITY GROUP #############################
+
+  ESBSG:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Security Group for ESB in MarketPlace VPC. By default allows all outbound traffic.
+      GroupName: !Join ["_", [!Ref EnvType, marketplace_esb_sg]]
+      SecurityGroupIngress:
+        - IpProtocol: TCP
+          FromPort: 22
+          ToPort: 22
+          CidrIp: 0.0.0.0/0
+      VpcId: !Ref VpcId
+      Tags:
+      - Key: Name
+        Value: ESB
+
+########################## EMPI SECURITY GROUP ##############################
+
+  EMPISG:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Security Group for EMPI in MarketPlace VPC. By default allows all outbound traffic.
+      GroupName: !Join ["_", [!Ref EnvType, marketplace_empi_sg]]
+      SecurityGroupIngress:
+        - IpProtocol: TCP
+          FromPort: 22
+          ToPort: 22
+          CidrIp: 0.0.0.0/0
+      VpcId: !Ref VpcId
+      Tags:
+      - Key: Name
+        Value: EMPI
+
+########################## ETL SECURITY GROUP ##############################
+
+  ETLSG:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Security Group for ETL in MarketPlace VPC. By default allows all outbound traffic.
+      GroupName: !Join ["_", [!Ref EnvType, marketplace_etl_sg]]
+      SecurityGroupIngress:
+        - IpProtocol: TCP
+          FromPort: 22
+          ToPort: 22
+          CidrIp: 0.0.0.0/0
+      VpcId: !Ref VpcId
+      Tags:
+      - Key: Name
+        Value: ETL
+
+##################### Experian SECURITY GROUP ##########################
+
+  ExperianSG:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Security Group for Experian in MarketPlace VPC. By default allows all outbound traffic.
+      GroupName: !Join ["_", [!Ref EnvType, marketplace_experian_sg]]
+      SecurityGroupIngress:
+        - IpProtocol: TCP
+          FromPort: 22
+          ToPort: 22
+          CidrIp: 0.0.0.0/0
+      VpcId: !Ref VpcId
+      Tags:
+      - Key: Name
+        Value: Experian
+
+########################## BI PUBLISHER SECURITY GROUP ##############################
+
+  BiPublisherSG:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Security Group for Bi Publisher in MarketPlace VPC. By default allows all outbound traffic.
+      GroupName: !Join ["_", [!Ref EnvType, marketplace_bipublisher_sg]]
+      SecurityGroupIngress:
+        - IpProtocol: TCP
+          FromPort: 22
+          ToPort: 22
+          CidrIp: 0.0.0.0/0
+      VpcId: !Ref VpcId
+      Tags:
+      - Key: Name
+        Value: Bi Publisher
+
+########################## Oracle OPA SECURITY GROUP ##############################
+
+  OracleOPASG:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Security Group for Oracle OPA in MarketPlace VPC. By default allows all outbound traffic.
+      GroupName: !Join ["_", [!Ref EnvType, marketplace_oracleopa_sg]]
+      SecurityGroupIngress:
+        - IpProtocol: TCP
+          FromPort: 22
+          ToPort: 22
+          CidrIp: 0.0.0.0/0
+      VpcId: !Ref VpcId
+      Tags:
+      - Key: Name
+        Value: Oracle OPA
+
+####################### SAIL POINT SECURITY GROUP #############################
+
+  SailPointSG:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Security Group for SailPoint in MarketPlace VPC. By default allows all outbound traffic.
+      GroupName: !Join ["_", [!Ref EnvType, marketplace_sailpoint_sg]]
+      SecurityGroupIngress:
+        - IpProtocol: TCP
+          FromPort: 22
+          ToPort: 22
+          CidrIp: 0.0.0.0/0
+      VpcId: !Ref VpcId
+      Tags:
+      - Key: Name
+        Value: SailPoint
+
+######################## SPLUNK SECURITY GROUP ############################
+
+  SplunkSG:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Security Group for Splunk 1 in MarketPlace VPC. By default allows all outbound traffic.
+      GroupName: !Join ["_", [!Ref EnvType, marketplace_splunk_sg]]
+      SecurityGroupIngress:
+        - IpProtocol: TCP
+          FromPort: 22
+          ToPort: 22
+          CidrIp: 0.0.0.0/0
+      VpcId: !Ref VpcId
+      Tags:
+      - Key: Name
+        Value: Splunk
+
+  ########################## AEM SECURITY GROUP ##############################
+
+  AEMSG:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Security Group for AEM in MarketPlace VPC. By default allows all outbound traffic.
+      GroupName: !Join ["_", [!Ref EnvType, marketplace_AEM_sg]]
+      SecurityGroupIngress:
+        - IpProtocol: TCP
+          FromPort: 3389
+          ToPort: 3389
+          CidrIp: 0.0.0.0/0
+      VpcId: !Ref VpcId
+      Tags:
+      - Key: Name
+        Value: AEM
+
+########################### OUTPUTS ##################################
+
+Outputs:
+  ForgeRockSG:
+    Description: Security Group Id for Forge Rock in MarketPlace VPC
+    Value: !Ref ForgeRockSG
+    Export:
+      Name: !Sub ${AWS::StackName}-ForgeRock
+
+  ESBSG:
+    Description: Security Group Id for ESB in MarketPlace VPC
+    Value: !Ref ESBSG
+    Export:
+      Name: !Sub ${AWS::StackName}-ESB
+
+  EMPISG:
+    Description: Security Group Id for EMPI in MarketPlace VPC
+    Value: !Ref EMPISG
+    Export:
+      Name: !Sub ${AWS::StackName}-EMPI
+
+  ETLSG:
+    Description: Security Group Id for ETL in MarketPlace VPC
+    Value: !Ref ETLSG
+    Export:
+      Name: !Sub ${AWS::StackName}-ETL
+
+  ExperianSG:
+    Description: Security Group Id for Experian in MarketPlace VPC
+    Value: !Ref ExperianSG
+    Export:
+      Name: !Sub ${AWS::StackName}-Experian
+
+  BiPublisherSG:
+    Description: Security Group Id for Bi Publisher in MarketPlace VPC
+    Value: !Ref BiPublisherSG
+    Export:
+      Name: !Sub ${AWS::StackName}-BiPublisher
+
+  OracleOPASG:
+    Description: Security Group Id for Oracle OPA in MarketPlace VPC
+    Value: !Ref OracleOPASG
+    Export:
+      Name: !Sub ${AWS::StackName}-OracleOPA
+
+  SailPointSG:
+    Description: Security Group Id for SailPoint in MarketPlace VPC
+    Value: !Ref SailPointSG
+    Export:
+      Name: !Sub ${AWS::StackName}-SailPoint
+
+  SplunkSG:
+    Description: Security Group Id for Splunk 1 in MarketPlace VPC
+    Value: !Ref SplunkSG
+    Export:
+      Name: !Sub ${AWS::StackName}-Splunk
+
+  AEMSG:
+    Description: Security Group Id for AEM in MarketPlace VPC
+    Value: !Ref AEMSG
+    Export:
+      Name: !Sub ${AWS::StackName}-AEM

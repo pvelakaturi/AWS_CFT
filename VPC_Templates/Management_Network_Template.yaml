@@ -34,6 +34,8 @@ Parameters:
       Description: CIDR IP for Subnet B
       ConstraintDescription: Must be a valid IP CIDR range orm x.x.x.x/x
 
+################################### RESOURCES ################################
+
 Resources:
   VPC:
     Type: AWS::EC2::VPC
@@ -59,6 +61,8 @@ Resources:
     Properties:
       VpcId: !Ref VPC
       InternetGatewayId: !Ref InternetGateway
+
+################################ SUBNETS ###############################
 
   InternalASubnet:
     Type: AWS::EC2::Subnet
@@ -107,6 +111,8 @@ Resources:
     Properties:
       SubnetId: !Ref InternalBSubnet
       RouteTableId: !Ref RouteTableB
+
+################################# OUTPUTS ####################################
 
 Outputs:
   VPC:

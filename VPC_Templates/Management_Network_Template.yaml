@@ -3,8 +3,6 @@ AWSTemplateFormatVersion: 2010-09-09
 Parameters:
     VPCName:
       Type: String
-      MinLength: '8'
-      MaxLength: '50'
       Description: Name your VPC
 
     CidrBlock:

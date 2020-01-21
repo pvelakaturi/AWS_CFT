@@ -90,25 +90,13 @@ Resources:
         - Key: Name
           Value: Route Table A
 
-  RouteTableB:
-    Type: AWS::EC2::RouteTable
-    Properties:
-      VpcId: !Ref VPC
-      Tags:
-        - Key: Name
-          Value: Route Table B
-
   RouteTableAAssociation:
     Type: AWS::EC2::SubnetRouteTableAssociation
     Properties:
-      SubnetId: !Ref TransitASubnet
+      SubnetId:
+      - !Ref TransitASubnet
+      - !Ref TransitBSubnet
       RouteTableId: !Ref RouteTableA
-
-  RouteTableBAssociation:
-    Type: AWS::EC2::SubnetRouteTableAssociation
-    Properties:
-      SubnetId: !Ref TransitBSubnet
-      RouteTableId: !Ref RouteTableB
 
 ################################ OUTPUTS #####################################
 

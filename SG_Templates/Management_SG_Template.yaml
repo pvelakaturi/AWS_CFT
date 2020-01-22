@@ -16,7 +16,7 @@ Metadata:
 
     ParameterLabels:
       VPCStackName:
-        default: "Which VPC should this template be deployed to?"
+        default: "Name of the VPC Stack in which these Security Groups belongs belong to."
 
       EnvType:
         default: Select a Environment Type
@@ -25,14 +25,14 @@ Metadata:
 
 Parameters:
   VPCStackName:
-    Description: Name of the VPC Stack in which these Security Groups belongs belong to.
+    #Description: Name of the VPC Stack in which these Security Groups belongs belong to.
     Type: String
     AllowedPattern: '[a-zA-Z][-a-zA-Z0-9]*$'
 
   EnvType:
     Type: String
-    Default: dev
-    AllowedValues: [dev, sit, sit1, prod, pre-prod, uat, trn]
+    Default: non-prod
+    AllowedValues: [prod, non-prod]
 
 ########################### RESOURCES ##################################
 

@@ -117,16 +117,16 @@ Outputs:
     Description: Management VPC
     Value: !Ref VPC
     Export:
-      Name: Management-VPC
+      Name: !Sub ${AWS::StackName}-VPC
 
   InternalASubnet:
     Description: Internal Subnet in AZ a
     Value: !Ref InternalASubnet
     Export:
-      Name: Management-InternalASubnet
+      Name: !Sub ${AWS::StackName}-InternalASubnet
 
   InternalBSubnet:
     Description: Internal Subnet in AZ b
     Value: !Ref InternalBSubnet
     Export:
-      Name: Management-InternalBSubnet
+      Name: !Sub ${AWS::StackName}-InternalBSubnet

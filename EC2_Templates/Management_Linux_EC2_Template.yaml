@@ -1,10 +1,10 @@
 AWSTemplateFormatVersion: 2010-09-09
 
 Parameters:
-  VpcId:
-    Description: VPC ID that this stack will be launched in.
-    Type: AWS::EC2::VPC::Id
-    AllowedPattern: "[a-z0-9-]*"
+  VPCStackName:
+    Description: Name of the Security Group Stack in which these Security Groups belongs belong to.
+    Type: String
+    AllowedPattern: '[a-zA-Z][-a-zA-Z0-9]*$'
 
   InstanceCount:
     Description: Number of EC2 instances (must be between 1 and 6).
@@ -63,8 +63,9 @@ Conditions:
   - !Not [!Equals [1, !Ref InstanceCount]]
   - !Not [!Equals [2, !Ref InstanceCount]]
   Launch4: !And
-  - !Not [!Equals [4, !Ref InstanceCount]]
-  - !Not [!Equals [5, !Ref InstanceCount]]
+  - !Not [!Equals [1, !Ref InstanceCount]]
+  - !Not [!Equals [2, !Ref InstanceCount]]
+  - !Not [!Equals [3, !Ref InstanceCount]]
   Launch5: !Or
   - !Equals [5, !Ref InstanceCount]
   - !Equals [6, !Ref InstanceCount]
@@ -82,7 +83,8 @@ Resources:
           AssociatePublicIpAddress: 'true'
           DeviceIndex: '0'
           DeleteOnTermination: 'true'
-          SubnetId: !ImportValue Management-InternalASubnet
+          SubnetId: !ImportValue
+                  'Fn::Sub': '${VPCStackName}-InternalASubnet'
       ImageId: !FindInMap
         - RegionMap
         - !Ref 'AWS::Region'
@@ -104,7 +106,8 @@ Resources:
           AssociatePublicIpAddress: 'true'
           DeviceIndex: '0'
           DeleteOnTermination: 'true'
-          SubnetId: !ImportValue Management-InternalBSubnet
+          SubnetId: !ImportValue
+                  'Fn::Sub': '${VPCStackName}-InternalBSubnet'
       ImageId: !FindInMap
         - RegionMap
         - !Ref 'AWS::Region'
@@ -126,7 +129,8 @@ Resources:
           AssociatePublicIpAddress: 'true'
           DeviceIndex: '0'
           DeleteOnTermination: 'true'
-          SubnetId: !ImportValue Management-InternalASubnet
+          SubnetId: !ImportValue
+                  'Fn::Sub': '${VPCStackName}-InternalASubnet'
       ImageId: !FindInMap
         - RegionMap
         - !Ref 'AWS::Region'
@@ -148,7 +152,8 @@ Resources:
           AssociatePublicIpAddress: 'true'
           DeviceIndex: '0'
           DeleteOnTermination: 'true'
-          SubnetId: !ImportValue Management-InternalBSubnet
+          SubnetId: !ImportValue
+                  'Fn::Sub': '${VPCStackName}-InternalBSubnet'
       ImageId: !FindInMap
         - RegionMap
         - !Ref 'AWS::Region'
@@ -170,7 +175,8 @@ Resources:
           AssociatePublicIpAddress: 'true'
           DeviceIndex: '0'
           DeleteOnTermination: 'true'
-          SubnetId: !ImportValue Management-InternalASubnet
+          SubnetId: !ImportValue
+                  'Fn::Sub': '${VPCStackName}-InternalASubnet'
       ImageId: !FindInMap
         - RegionMap
         - !Ref 'AWS::Region'
@@ -192,7 +198,8 @@ Resources:
           AssociatePublicIpAddress: 'true'
           DeviceIndex: '0'
           DeleteOnTermination: 'true'
-          SubnetId: !ImportValue Management-InternalBSubnet
+          SubnetId: !ImportValue
+                  'Fn::Sub': '${VPCStackName}-InternalBSubnet'
       ImageId: !FindInMap
         - RegionMap
         - !Ref 'AWS::Region'

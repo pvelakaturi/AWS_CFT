@@ -1,0 +1,204 @@
+AWSTemplateFormatVersion: 2010-09-09
+
+Parameters:
+  VpcId:
+    Description: VPC ID that this stack will be launched in.
+    Type: AWS::EC2::VPC::Id
+    AllowedPattern: "[a-z0-9-]*"
+
+  InstanceCount:
+    Description: Number of EC2 instances (must be between 1 and 6).
+    Type: Number
+    Default: 1
+    MinValue: 1
+    MaxValue: 6
+    ConstraintDescription: Must be a number between 1 and 6.
+
+  InstanceType:
+    Description: Type of EC2 instance to launch for the server.
+    Type: String
+    Default: t2.medium
+    ConstraintDescription: Must be a valid EC2 instance type.
+    AllowedValues:
+      - t2.nano
+      - t2.micro
+      - t2.small
+      - t2.medium
+      - t2.large
+      - t2.xlarge
+      - t2.2xlarge
+      - m4.large
+      - m4.xlarge
+      - m4.2xlarge
+      - m4.4xlarge
+      - m4.10xlarge
+      - m4.16xlarge
+      - m5.large
+      - m5.xlarge
+      - m5.2xlarge
+      - m5.4xlarge
+      - m5.12xlarge
+      - m5.24xlarge
+
+  InstanceTagName:
+    Description: Instance Name tag that will be used to define the Name of the instance resource(s)
+    Type: String
+    Default: GAIES
+
+  InstanceSecurityGroup:
+    Description: Security Group for the EC2 instance
+    Type: AWS::EC2::SecurityGroup::Id
+
+Mappings:
+  RegionMap:
+    'us-east-1':
+      AMI: 'ami-09d069a04349dc3cb'
+    'us-west-1':
+      AMI: 'ami-04bc3da8f14823e88'
+
+Conditions:
+  Launch1: !Equals [1, 1]
+  Launch2: !Not [!Equals [1, !Ref InstanceCount]]
+  Launch3: !And
+  - !Not [!Equals [1, !Ref InstanceCount]]
+  - !Not [!Equals [2, !Ref InstanceCount]]
+  Launch4: !And
+  - !Not [!Equals [4, !Ref InstanceCount]]
+  - !Not [!Equals [5, !Ref InstanceCount]]
+  Launch5: !Or
+  - !Equals [5, !Ref InstanceCount]
+  - !Equals [6, !Ref InstanceCount]
+  Launch6: !Equals [6, !Ref InstanceCount]
+
+Resources:
+  Instance1:
+    Condition: Launch1
+    Description: Worker Portal (Production environment) EC2 Instance.
+    Type: AWS::EC2::Instance
+    Properties:
+      NetworkInterfaces:
+        - GroupSet:
+            - !Ref InstanceSecurityGroup
+          AssociatePublicIpAddress: 'true'
+          DeviceIndex: '0'
+          DeleteOnTermination: 'true'
+          SubnetId: !ImportValue Management-InternalASubnet
+      ImageId: !FindInMap
+        - RegionMap
+        - !Ref 'AWS::Region'
+        - AMI
+      InstanceType: !Ref InstanceType
+      AvailabilityZone: !Select [0, !GetAZs '']
+      Tags:
+        - Key: Name
+          Value: !Ref InstanceTagName
+
+  Instance2:
+    Condition: Launch2
+    Description: Worker Portal (Production environment) EC2 Instance.
+    Type: AWS::EC2::Instance
+    Properties:
+      NetworkInterfaces:
+        - GroupSet:
+            - !Ref InstanceSecurityGroup
+          AssociatePublicIpAddress: 'true'
+          DeviceIndex: '0'
+          DeleteOnTermination: 'true'
+          SubnetId: !ImportValue Management-InternalBSubnet
+      ImageId: !FindInMap
+        - RegionMap
+        - !Ref 'AWS::Region'
+        - AMI
+      InstanceType: !Ref InstanceType
+      AvailabilityZone: !Select [1, !GetAZs '']
+      Tags:
+        - Key: Name
+          Value: !Ref InstanceTagName
+
+  Instance3:
+    Condition: Launch3
+    Description: Worker Portal (Production environment) EC2 Instance.
+    Type: AWS::EC2::Instance
+    Properties:
+      NetworkInterfaces:
+        - GroupSet:
+            - !Ref InstanceSecurityGroup
+          AssociatePublicIpAddress: 'true'
+          DeviceIndex: '0'
+          DeleteOnTermination: 'true'
+          SubnetId: !ImportValue Management-InternalASubnet
+      ImageId: !FindInMap
+        - RegionMap
+        - !Ref 'AWS::Region'
+        - AMI
+      InstanceType: !Ref InstanceType
+      AvailabilityZone: !Select [0, !GetAZs '']
+      Tags:
+        - Key: Name
+          Value: !Ref InstanceTagName
+
+  Instance4:
+    Condition: Launch4
+    Description: Worker Portal (Production environment) EC2 Instance.
+    Type: AWS::EC2::Instance
+    Properties:
+      NetworkInterfaces:
+        - GroupSet:
+            - !Ref InstanceSecurityGroup
+          AssociatePublicIpAddress: 'true'
+          DeviceIndex: '0'
+          DeleteOnTermination: 'true'
+          SubnetId: !ImportValue Management-InternalBSubnet
+      ImageId: !FindInMap
+        - RegionMap
+        - !Ref 'AWS::Region'
+        - AMI
+      InstanceType: !Ref InstanceType
+      AvailabilityZone: !Select [1, !GetAZs '']
+      Tags:
+        - Key: Name
+          Value: !Ref InstanceTagName
+
+  Instance5:
+    Condition: Launch5
+    Description: Worker Portal (Production environment) EC2 Instance.
+    Type: AWS::EC2::Instance
+    Properties:
+      NetworkInterfaces:
+        - GroupSet:
+            - !Ref InstanceSecurityGroup
+          AssociatePublicIpAddress: 'true'
+          DeviceIndex: '0'
+          DeleteOnTermination: 'true'
+          SubnetId: !ImportValue Management-InternalASubnet
+      ImageId: !FindInMap
+        - RegionMap
+        - !Ref 'AWS::Region'
+        - AMI
+      InstanceType: !Ref InstanceType
+      AvailabilityZone: !Select [0, !GetAZs '']
+      Tags:
+        - Key: Name
+          Value: !Ref InstanceTagName
+
+  Instance6:
+    Condition: Launch6
+    Description: Worker Portal (Production environment) EC2 Instance.
+    Type: AWS::EC2::Instance
+    Properties:
+      NetworkInterfaces:
+        - GroupSet:
+            - !Ref InstanceSecurityGroup
+          AssociatePublicIpAddress: 'true'
+          DeviceIndex: '0'
+          DeleteOnTermination: 'true'
+          SubnetId: !ImportValue Management-InternalBSubnet
+      ImageId: !FindInMap
+        - RegionMap
+        - !Ref 'AWS::Region'
+        - AMI
+      InstanceType: !Ref InstanceType
+      AvailabilityZone: !Select [1, !GetAZs '']
+      Tags:
+        - Key: Name
+          Value: !Ref InstanceTagName

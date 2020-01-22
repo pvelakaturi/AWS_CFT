@@ -5,11 +5,6 @@ Metadata:
     ParameterGroups:
       -
         Label:
-          default: "Environment Type"
-        Parameters:
-          - EnvType
-      -
-        Label:
           default: "VPC"
         Parameters:
           - VpcId
@@ -28,11 +23,6 @@ Parameters:
     Type: AWS::EC2::VPC::Id
     Description: Select the VPC you want to place these SGs in
 
-  EnvType:
-    Type: String
-    Default: dev
-    AllowedValues: [dev, sit, sit1, prod, pre-prod, uat, trn]
-
 ########################### RESOURCES ##################################
 
 Resources:
@@ -43,7 +33,7 @@ Resources:
     Type: AWS::EC2::SecurityGroup
     Properties:
       GroupDescription: Security Group for Bastion Host in Management VPC. By default allows all outbound traffic.
-      GroupName: !Join ["_", [!Ref EnvType, management_bastionhost_sg]]
+      GroupName:  management_bastionhost_sg
       SecurityGroupIngress:
         - IpProtocol: TCP
           FromPort: 22
@@ -60,7 +50,7 @@ Resources:
     Type: AWS::EC2::SecurityGroup
     Properties:
       GroupDescription: Security Group for Ansible in Management VPC. By default allows all outbound traffic.
-      GroupName: !Join ["_", [!Ref EnvType, management_ansible_sg]]
+      GroupName: management_ansible_sg
       SecurityGroupIngress:
         - IpProtocol: TCP
           FromPort: 22
@@ -77,7 +67,7 @@ Resources:
     Type: AWS::EC2::SecurityGroup
     Properties:
       GroupDescription: Security Group for Trend in Management VPC. By default allows all outbound traffic.
-      GroupName: !Join ["_", [!Ref EnvType, management_trend_sg]]
+      GroupName: management_trend_sg
       SecurityGroupIngress:
         - IpProtocol: TCP
           FromPort: 22
@@ -94,7 +84,7 @@ Resources:
     Type: AWS::EC2::SecurityGroup
     Properties:
       GroupDescription: Security Group for Centrify in Management VPC. By default allows all outbound traffic.
-      GroupName: !Join ["_", [!Ref EnvType, management_centrify_sg]]
+      GroupName: management_centrify_sg
       SecurityGroupIngress:
         - IpProtocol: TCP
           FromPort: 22
@@ -111,7 +101,7 @@ Resources:
     Type: AWS::EC2::SecurityGroup
     Properties:
       GroupDescription: Security Group for Security Tenable in Management VPC. By default allows all outbound traffic.
-      GroupName: !Join ["_", [!Ref EnvType, management_securitytenable_sg]]
+      GroupName: management_securitytenable_sg
       SecurityGroupIngress:
         - IpProtocol: TCP
           FromPort: 22
@@ -128,7 +118,7 @@ Resources:
     Type: AWS::EC2::SecurityGroup
     Properties:
       GroupDescription: Security Group for WSUS in Management VPC. By default allows all outbound traffic.
-      GroupName: !Join ["_", [!Ref EnvType, management_wsus_sg]]
+      GroupName: management_wsus_sg
       SecurityGroupIngress:
         - IpProtocol: TCP
           FromPort: 22
@@ -145,7 +135,7 @@ Resources:
     Type: AWS::EC2::SecurityGroup
     Properties:
       GroupDescription: Security Group for AD in Management VPC. By default allows all outbound traffic.
-      GroupName: !Join ["_", [!Ref EnvType, management_ad_sg]]
+      GroupName: management_ad_sg
       SecurityGroupIngress:
         - IpProtocol: TCP
           FromPort: 3389
@@ -162,7 +152,7 @@ Resources:
     Type: AWS::EC2::SecurityGroup
     Properties:
       GroupDescription: Security Group for RTC in Management VPC. By default allows all outbound traffic.
-      GroupName: !Join ["_", [!Ref EnvType, management_rtc_sg]]
+      GroupName: management_rtc_sg
       SecurityGroupIngress:
         - IpProtocol: TCP
           FromPort: 22
@@ -179,7 +169,7 @@ Resources:
     Type: AWS::EC2::SecurityGroup
     Properties:
       GroupDescription: Security Group for Urban Code in Management VPC. By default allows all outbound traffic.
-      GroupName: !Join ["_", [!Ref EnvType, management_urbancode_sg]]
+      GroupName: management_urbancode_sg
       SecurityGroupIngress:
         - IpProtocol: TCP
           FromPort: 22
@@ -196,7 +186,7 @@ Resources:
     Type: AWS::EC2::SecurityGroup
     Properties:
       GroupDescription: Security Group for Remedy in Management VPC. By default allows all outbound traffic.
-      GroupName: !Join ["_", [!Ref EnvType, management_remedy_sg]]
+      GroupName: management_remedy_sg
       SecurityGroupIngress:
         - IpProtocol: TCP
           FromPort: 3389

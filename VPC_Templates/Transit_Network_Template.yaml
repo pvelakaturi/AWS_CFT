@@ -93,10 +93,14 @@ Resources:
   RouteTableAAssociation:
     Type: AWS::EC2::SubnetRouteTableAssociation
     Properties:
-      SubnetId:
-      - !Ref TransitASubnet
-      - !Ref TransitBSubnet
+      SubnetId: !Ref TransitASubnet
       RouteTableId: !Ref RouteTableA
+
+  RouteTableBAssociation:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      SubnetId: !Ref TransitBSubnet
+      RouteTableId: !Ref RouteTableB
 
 ################################ OUTPUTS #####################################
 

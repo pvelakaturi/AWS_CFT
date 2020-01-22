@@ -5,12 +5,17 @@ Metadata:
     ParameterGroups:
       -
         Label:
-          default: "VPC"
+          default: "Environment Type"
         Parameters:
-          - VpcId
+          - EnvType
+      -
+        Label:
+          default: "VPC Stack Name"
+        Parameters:
+          - VPCStackName
 
     ParameterLabels:
-      VpcId:
+      VPCStackName:
         default: "Which VPC should this template be deployed to?"
 
       EnvType:
@@ -19,9 +24,15 @@ Metadata:
 ########################### PARAMETERS ##################################
 
 Parameters:
-  VpcId:
-    Type: AWS::EC2::VPC::Id
-    Description: Select the VPC you want to place these SGs in
+  VPCStackName:
+    Description: Name of the VPC Stack in which these Security Groups belongs belong to.
+    Type: String
+    AllowedPattern: '[a-zA-Z][-a-zA-Z0-9]*$'
+
+  EnvType:
+    Type: String
+    Default: dev
+    AllowedValues: [dev, sit, sit1, prod, pre-prod, uat, trn]
 
 ########################### RESOURCES ##################################
 
@@ -33,13 +44,14 @@ Resources:
     Type: AWS::EC2::SecurityGroup
     Properties:
       GroupDescription: Security Group for Bastion Host in Management VPC. By default allows all outbound traffic.
-      GroupName:  management_bastionhost_sg
+      GroupName: !Join ["_", [!Ref EnvType, management_bastionhost_sg]]
       SecurityGroupIngress:
         - IpProtocol: TCP
           FromPort: 22
           ToPort: 22
           CidrIp: 0.0.0.0/0
-      VpcId: !Ref VpcId
+      VpcId: !ImportValue
+              'Fn::Sub': '${VPCStackName}-VPC'
       Tags:
       - Key: Name
         Value: BastionHost
@@ -50,13 +62,14 @@ Resources:
     Type: AWS::EC2::SecurityGroup
     Properties:
       GroupDescription: Security Group for Ansible in Management VPC. By default allows all outbound traffic.
-      GroupName: management_ansible_sg
+      GroupName: !Join ["_", [!Ref EnvType, management_ansible_sg]]
       SecurityGroupIngress:
         - IpProtocol: TCP
           FromPort: 22
           ToPort: 22
           CidrIp: 0.0.0.0/0
-      VpcId: !Ref VpcId
+      VpcId: !ImportValue
+              'Fn::Sub': '${VPCStackName}-VPC'
       Tags:
       - Key: Name
         Value: Ansible
@@ -67,13 +80,14 @@ Resources:
     Type: AWS::EC2::SecurityGroup
     Properties:
       GroupDescription: Security Group for Trend in Management VPC. By default allows all outbound traffic.
-      GroupName: management_trend_sg
+      GroupName: !Join ["_", [!Ref EnvType, management_trend_sg]]
       SecurityGroupIngress:
         - IpProtocol: TCP
           FromPort: 22
           ToPort: 22
           CidrIp: 0.0.0.0/0
-      VpcId: !Ref VpcId
+      VpcId: !ImportValue
+              'Fn::Sub': '${VPCStackName}-VPC'
       Tags:
       - Key: Name
         Value: Trend
@@ -84,13 +98,14 @@ Resources:
     Type: AWS::EC2::SecurityGroup
     Properties:
       GroupDescription: Security Group for Centrify in Management VPC. By default allows all outbound traffic.
-      GroupName: management_centrify_sg
+      GroupName: !Join ["_", [!Ref EnvType, management_centrify_sg]]
       SecurityGroupIngress:
         - IpProtocol: TCP
           FromPort: 22
           ToPort: 22
           CidrIp: 0.0.0.0/0
-      VpcId: !Ref VpcId
+      VpcId: !ImportValue
+              'Fn::Sub': '${VPCStackName}-VPC'
       Tags:
       - Key: Name
         Value: Centrify
@@ -101,13 +116,14 @@ Resources:
     Type: AWS::EC2::SecurityGroup
     Properties:
       GroupDescription: Security Group for Security Tenable in Management VPC. By default allows all outbound traffic.
-      GroupName: management_securitytenable_sg
+      GroupName: !Join ["_", [!Ref EnvType, management_securitytenable_sg]]
       SecurityGroupIngress:
         - IpProtocol: TCP
           FromPort: 22
           ToPort: 22
           CidrIp: 0.0.0.0/0
-      VpcId: !Ref VpcId
+      VpcId: !ImportValue
+              'Fn::Sub': '${VPCStackName}-VPC'
       Tags:
       - Key: Name
         Value: SecurityTenable
@@ -118,13 +134,14 @@ Resources:
     Type: AWS::EC2::SecurityGroup
     Properties:
       GroupDescription: Security Group for WSUS in Management VPC. By default allows all outbound traffic.
-      GroupName: management_wsus_sg
+      GroupName: !Join ["_", [!Ref EnvType, management_wsus_sg]]
       SecurityGroupIngress:
         - IpProtocol: TCP
           FromPort: 22
           ToPort: 22
           CidrIp: 0.0.0.0/0
-      VpcId: !Ref VpcId
+      VpcId: !ImportValue
+              'Fn::Sub': '${VPCStackName}-VPC'
       Tags:
       - Key: Name
         Value: WSUS
@@ -135,13 +152,14 @@ Resources:
     Type: AWS::EC2::SecurityGroup
     Properties:
       GroupDescription: Security Group for AD in Management VPC. By default allows all outbound traffic.
-      GroupName: management_ad_sg
+      GroupName: !Join ["_", [!Ref EnvType, management_ad_sg]]
       SecurityGroupIngress:
         - IpProtocol: TCP
           FromPort: 3389
           ToPort: 3389
           CidrIp: 0.0.0.0/0
-      VpcId: !Ref VpcId
+      VpcId: !ImportValue
+              'Fn::Sub': '${VPCStackName}-VPC'
       Tags:
       - Key: Name
         Value: AD
@@ -152,13 +170,14 @@ Resources:
     Type: AWS::EC2::SecurityGroup
     Properties:
       GroupDescription: Security Group for RTC in Management VPC. By default allows all outbound traffic.
-      GroupName: management_rtc_sg
+      GroupName: !Join ["_", [!Ref EnvType, management_rtc_sg]]
       SecurityGroupIngress:
         - IpProtocol: TCP
           FromPort: 22
           ToPort: 22
           CidrIp: 0.0.0.0/0
-      VpcId: !Ref VpcId
+      VpcId: !ImportValue
+              'Fn::Sub': '${VPCStackName}-VPC'
       Tags:
       - Key: Name
         Value: RTC
@@ -169,13 +188,14 @@ Resources:
     Type: AWS::EC2::SecurityGroup
     Properties:
       GroupDescription: Security Group for Urban Code in Management VPC. By default allows all outbound traffic.
-      GroupName: management_urbancode_sg
+      GroupName: !Join ["_", [!Ref EnvType, management_urbancode_sg]]
       SecurityGroupIngress:
         - IpProtocol: TCP
           FromPort: 22
           ToPort: 22
           CidrIp: 0.0.0.0/0
-      VpcId: !Ref VpcId
+      VpcId: !ImportValue
+              'Fn::Sub': '${VPCStackName}-VPC'
       Tags:
       - Key: Name
         Value: Urban Code
@@ -186,13 +206,14 @@ Resources:
     Type: AWS::EC2::SecurityGroup
     Properties:
       GroupDescription: Security Group for Remedy in Management VPC. By default allows all outbound traffic.
-      GroupName: management_remedy_sg
+      GroupName: !Join ["_", [!Ref EnvType, management_remedy_sg]]
       SecurityGroupIngress:
         - IpProtocol: TCP
           FromPort: 3389
           ToPort: 3389
           CidrIp: 0.0.0.0/0
-      VpcId: !Ref VpcId
+      VpcId: !ImportValue
+              'Fn::Sub': '${VPCStackName}-VPC'
       Tags:
       - Key: Name
         Value: Remedy

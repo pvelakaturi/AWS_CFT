@@ -6,6 +6,11 @@ Parameters:
     Type: String
     AllowedPattern: '[a-zA-Z][-a-zA-Z0-9]*$'
 
+  EnvType:
+    Description: Select a Environment Type
+    Type: String
+    AllowedValues: [PRD, NONPRD]
+
   InstanceCount:
     Description: Number of EC2 instances (must be between 1 and 6).
     Type: Number
@@ -49,12 +54,11 @@ Parameters:
     Description: Security Group for the EC2 instance
     Type: AWS::EC2::SecurityGroup::Id
 
-Mappings:
-  RegionMap:
-    'us-east-1':
-      AMI: 'ami-09d069a04349dc3cb'
-    'us-west-1':
-      AMI: 'ami-04bc3da8f14823e88'
+  AMI:
+    Description: AMI for the instance image
+    Type: String
+
+############################## CONDITIONS #####################################
 
 Conditions:
   Launch1: !Equals [1, 1]
@@ -71,6 +75,8 @@ Conditions:
   - !Equals [6, !Ref InstanceCount]
   Launch6: !Equals [6, !Ref InstanceCount]
 
+############################# RESOURCES ######################################
+
 Resources:
   Instance1:
     Condition: Launch1
@@ -85,15 +91,14 @@ Resources:
           DeleteOnTermination: 'true'
           SubnetId: !ImportValue
                   'Fn::Sub': '${VPCStackName}-InternalASubnet'
-      ImageId: !FindInMap
-        - RegionMap
-        - !Ref 'AWS::Region'
-        - AMI
+      ImageId: !Ref AMI
       InstanceType: !Ref InstanceType
       AvailabilityZone: !Select [0, !GetAZs '']
       Tags:
         - Key: Name
           Value: !Ref InstanceTagName
+        - Key: Host Name
+          Value: !Join ["", [GAIES, !Ref EnvType, !Ref InstanceTagName, 01]]
 
   Instance2:
     Condition: Launch2
@@ -108,15 +113,14 @@ Resources:
           DeleteOnTermination: 'true'
           SubnetId: !ImportValue
                   'Fn::Sub': '${VPCStackName}-InternalBSubnet'
-      ImageId: !FindInMap
-        - RegionMap
-        - !Ref 'AWS::Region'
-        - AMI
+      ImageId: !Ref AMI
       InstanceType: !Ref InstanceType
       AvailabilityZone: !Select [1, !GetAZs '']
       Tags:
         - Key: Name
           Value: !Ref InstanceTagName
+        - Key: Host Name
+          Value: !Join ["", [GAIES, !Ref EnvType, !Ref InstanceTagName, 02]]
 
   Instance3:
     Condition: Launch3
@@ -131,15 +135,14 @@ Resources:
           DeleteOnTermination: 'true'
           SubnetId: !ImportValue
                   'Fn::Sub': '${VPCStackName}-InternalASubnet'
-      ImageId: !FindInMap
-        - RegionMap
-        - !Ref 'AWS::Region'
-        - AMI
+      ImageId: !Ref AMI
       InstanceType: !Ref InstanceType
       AvailabilityZone: !Select [0, !GetAZs '']
       Tags:
         - Key: Name
           Value: !Ref InstanceTagName
+        - Key: Host Name
+          Value: !Join ["", [GAIES, !Ref EnvType, !Ref InstanceTagName, 03]]
 
   Instance4:
     Condition: Launch4
@@ -154,15 +157,14 @@ Resources:
           DeleteOnTermination: 'true'
           SubnetId: !ImportValue
                   'Fn::Sub': '${VPCStackName}-InternalBSubnet'
-      ImageId: !FindInMap
-        - RegionMap
-        - !Ref 'AWS::Region'
-        - AMI
+      ImageId: !Ref AMI
       InstanceType: !Ref InstanceType
       AvailabilityZone: !Select [1, !GetAZs '']
       Tags:
         - Key: Name
           Value: !Ref InstanceTagName
+        - Key: Host Name
+          Value: !Join ["", [GAIES, !Ref EnvType, !Ref InstanceTagName, 04]]
 
   Instance5:
     Condition: Launch5
@@ -177,15 +179,14 @@ Resources:
           DeleteOnTermination: 'true'
           SubnetId: !ImportValue
                   'Fn::Sub': '${VPCStackName}-InternalASubnet'
-      ImageId: !FindInMap
-        - RegionMap
-        - !Ref 'AWS::Region'
-        - AMI
+      ImageId: !Ref AMI
       InstanceType: !Ref InstanceType
       AvailabilityZone: !Select [0, !GetAZs '']
       Tags:
         - Key: Name
           Value: !Ref InstanceTagName
+        - Key: Host Name
+          Value: !Join ["", [GAIES, !Ref EnvType, !Ref InstanceTagName, 05]]
 
   Instance6:
     Condition: Launch6
@@ -200,12 +201,56 @@ Resources:
           DeleteOnTermination: 'true'
           SubnetId: !ImportValue
                   'Fn::Sub': '${VPCStackName}-InternalBSubnet'
-      ImageId: !FindInMap
-        - RegionMap
-        - !Ref 'AWS::Region'
-        - AMI
+      ImageId: !Ref AMI
       InstanceType: !Ref InstanceType
       AvailabilityZone: !Select [1, !GetAZs '']
       Tags:
         - Key: Name
           Value: !Ref InstanceTagName
+        - Key: Host Name
+          Value: !Join ["", [GAIES, !Ref EnvType, !Ref InstanceTagName, 06]]
+
+################################### OUTPUTS ##################################
+
+Outputs:
+  Instance1:
+    Condition: Launch1
+    Description: Instance1
+    Value: !Ref Instance1
+    Export:
+      Name: !Join ["", [GAIES, !Ref EnvType, !Ref InstanceTagName, 01]]
+
+  Instance2:
+    Condition: Launch2
+    Description: Instance 2
+    Value: !Ref Instance2
+    Export:
+      Name: !Join ["", [GAIES, !Ref EnvType, !Ref InstanceTagName, 02]]
+
+  Instance3:
+    Condition: Launch3
+    Description: Instance 3
+    Value: !Ref Instance3
+    Export:
+      Name: !Join ["", [GAIES, !Ref EnvType, !Ref InstanceTagName, 03]]
+
+  Instance4:
+    Condition: Launch4
+    Description: Instance 4
+    Value: !Ref Instance4
+    Export:
+      Name: !Join ["", [GAIES, !Ref EnvType, !Ref InstanceTagName, 04]]
+
+  Instance5:
+    Condition: Launch5
+    Description: Instance 5
+    Value: !Ref Instance5
+    Export:
+      Name: !Join ["", [GAIES, !Ref EnvType, !Ref InstanceTagName, 05]]
+
+  Instance6:
+    Condition: Launch6
+    Description: Instance 6
+    Value: !Ref Instance6
+    Export:
+      Name: !Join ["", [GAIES, !Ref EnvType, !Ref InstanceTagName, 06]]

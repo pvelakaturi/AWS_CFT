@@ -30,20 +30,21 @@ Parameters:
       - t2.small
       - t2.medium
       - t2.large
-      - t2.xlarge
-      - t2.2xlarge
-      - m4.large
-      - m4.xlarge
-      - m4.2xlarge
-      - m4.4xlarge
-      - m4.10xlarge
-      - m4.16xlarge
       - m5.large
       - m5.xlarge
       - m5.2xlarge
       - m5.4xlarge
-      - m5.12xlarge
-      - m5.24xlarge
+      - m5.8xlarge
+      - r5.large
+      - r5.xlarge
+      - r5.2xlarge
+      - r5.4xlarge
+      - c5.large
+      - c5.xlarge
+      - c5.2xlarge
+      - c5.4xlarge
+      - db.m5.large
+      - db.m5.2xlarge
 
   InstanceTagName:
     Description: Instance Name tag that will be used to define the Name of the instance resource(s)

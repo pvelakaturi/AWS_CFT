@@ -1,0 +1,18 @@
+[
+  {
+    "ParameterKey": "VPCName",
+    "ParameterValue": "BuildnNetworkStack"
+  },
+  {
+    "ParameterKey": "CidrBlock",
+    "ParameterValue": "10.10.0.0/16"
+  },
+  {
+    "ParameterKey": "AppSubnetCIDR",
+    "ParameterValue": "10.10.70.0/24"
+  },
+  {
+    "ParameterKey": "DatabaseSubnetCIDR",
+    "ParameterValue": "10.10.80.0/24"
+  }
+]

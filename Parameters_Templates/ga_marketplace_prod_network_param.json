@@ -1,0 +1,26 @@
+[
+  {
+    "ParameterKey": "VPCName",
+    "ParameterValue": "GAMarketPlaceProductionNetworkStack"
+  },
+  {
+    "ParameterKey": "CidrBlock",
+    "ParameterValue": "10.10.0.0/16"
+  },
+  {
+    "ParameterKey": "DMZASubnetCIDR",
+    "ParameterValue": "10.10.10.0/24"
+  },
+  {
+    "ParameterKey": "DMZBSubnetCIDR",
+    "ParameterValue": "10.10.20.0/24"
+  },
+  {
+    "ParameterKey": "InternalASubnetCIDR",
+    "ParameterValue": "10.10.30.0/24"
+  },
+  {
+    "ParameterKey": "InternalBSubnetCIDR",
+    "ParameterValue": "10.10.40.0/24"
+  }
+]

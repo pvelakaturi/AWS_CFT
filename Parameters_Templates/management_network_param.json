@@ -1,0 +1,18 @@
+[
+  {
+    "ParameterKey": "VPCName",
+    "ParameterValue": "ManagementNetworkStack"
+  },
+  {
+    "ParameterKey": "CidrBlock",
+    "ParameterValue": "10.1.0.0/16"
+  },
+  {
+    "ParameterKey": "InternalASubnetCIDR",
+    "ParameterValue": "10.1.20.0/24"
+  },
+  {
+    "ParameterKey": "InternalBSubnetCIDR",
+    "ParameterValue": "10.1.40.0/24"
+  }
+]

@@ -1,0 +1,58 @@
+AWSTemplateFormatVersion: 2010-09-09
+
+##############################METADATA##################################
+
+Metadata:
+  'AWS::CloudFormation::Interface':
+    ParameterGroups:
+    - Label:
+        default: 'Parent Stacks'
+      Parameters:
+      - ParentVpcEndpointStack
+    - Label:
+        default: 'S3 Parameters'
+      Parameters:
+      - BucketName
+
+
+###############################PARAMETERS##################################
+
+Parameters:
+  ParentVpcEndpointStack:
+    Description: 'Optional Stack name of parent VPC endpoint stack based on.'
+    Type: String
+    Default: ''
+  BucketName:
+    Description: 'Optional name of the bucket.'
+    Type: String
+    Default: ''
+
+#################################CONDITIONS#################################
+
+
+##############################RESROUCES#####################################
+
+Resources:
+  Bucket: # cannot be deleted with data
+    Type: 'AWS::S3::Bucket'
+    Properties:
+      BucketName: !Ref BucketName
+      
+#################################OUTPUTS####################################
+
+Outputs:
+  StackName:
+    Description: 'Stack name.'
+    Value: !Sub '${AWS::StackName}'
+
+  BucketName:
+    Description: 'Name of the bucket'
+    Value: !Ref Bucket
+    Export:
+      Name: !Sub '${AWS::StackName}-BucketName'
+
+  BucketDomainName:
+    Description: 'Domain name of the bucket.'
+    Value: !GetAtt 'Bucket.DomainName'
+    Export:
+      Name: !Sub '${AWS::StackName}-BucketDomainName'

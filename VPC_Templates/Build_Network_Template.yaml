@@ -1,4 +1,4 @@
-AWSTemplateFormatVersion: 2010-09-09
+AWSTemplateFformatVersion: 2010-09-09
 
 Parameters:
     VPCName:
@@ -12,7 +12,7 @@ Parameters:
       Default: 0.0.0.0/0
       AllowedPattern: '(\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})/(\d{1,2})'
       Description: The IP address range that can be used to SSH to the EC2 instances
-      ConstraintDescription: Must be a valid IP CIDR range orm x.x.x.x/x
+      ConstraintDescription: Must be a valid IP CIDR range form x.x.x.x/x
 
     AppSubnetCIDR:
       Type: String
@@ -21,7 +21,7 @@ Parameters:
       Default: 0.0.0.0/0
       AllowedPattern: '(\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})/(\d{1,2})'
       Description: CIDR IP for App Subnet
-      ConstraintDescription: Must be a valid IP CIDR range orm x.x.x.x/x
+      ConstraintDescription: Must be a valid IP CIDR range form x.x.x.x/x
 
     DatabaseSubnetCIDR:
       Type: String
@@ -30,7 +30,7 @@ Parameters:
       Default: 0.0.0.0/0
       AllowedPattern: '(\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})/(\d{1,2})'
       Description: CIDR IP for Database Subnet
-      ConstraintDescription: Must be a valid IP CIDR range orm x.x.x.x/x
+      ConstraintDescription: Must be a valid IP CIDR range form x.x.x.x/x
 
 ############################### RESOURCES ##################################
 

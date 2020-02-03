@@ -10,13 +10,13 @@ Metadata:
           - EnvType
       -
         Label:
-          default: "VPC"
+          default: "VPC Stack Name"
         Parameters:
-          - VpcId
+          - VPCStackName
 
     ParameterLabels:
-      VpcId:
-        default: "Which VPC should this template be deployed to?"
+      VPCStackName:
+        default: "Name of the VPC Stack in which these Security Groups belongs belong to."
 
       EnvType:
         default: Select a Environment Type
@@ -24,9 +24,10 @@ Metadata:
 ########################### PARAMETERS ##################################
 
 Parameters:
-  VpcId:
-    Type: AWS::EC2::VPC::Id
-
+  VPCStackName:
+    #Description: Name of the VPC Stack in which these Security Groups belongs belong to.
+    Type: String
+    AllowedPattern: '[a-zA-Z][-a-zA-Z0-9]*$'
 
   EnvType:
     Type: String
@@ -49,7 +50,8 @@ Resources:
           FromPort: 22
           ToPort: 22
           CidrIp: 0.0.0.0/0
-      VpcId: !Ref VpcId
+      VpcId: !ImportValue
+              'Fn::Sub': '${VPCStackName}-VPC'
       Tags:
       - Key: Name
         Value: ForgeRock
@@ -66,7 +68,8 @@ Resources:
           FromPort: 22
           ToPort: 22
           CidrIp: 0.0.0.0/0
-      VpcId: !Ref VpcId
+      VpcId: !ImportValue
+              'Fn::Sub': '${VPCStackName}-VPC'
       Tags:
       - Key: Name
         Value: ESB
@@ -83,7 +86,8 @@ Resources:
           FromPort: 22
           ToPort: 22
           CidrIp: 0.0.0.0/0
-      VpcId: !Ref VpcId
+      VpcId: !ImportValue
+              'Fn::Sub': '${VPCStackName}-VPC'
       Tags:
       - Key: Name
         Value: EMPI
@@ -100,7 +104,8 @@ Resources:
           FromPort: 22
           ToPort: 22
           CidrIp: 0.0.0.0/0
-      VpcId: !Ref VpcId
+      VpcId: !ImportValue
+              'Fn::Sub': '${VPCStackName}-VPC'
       Tags:
       - Key: Name
         Value: ETL
@@ -117,7 +122,8 @@ Resources:
           FromPort: 22
           ToPort: 22
           CidrIp: 0.0.0.0/0
-      VpcId: !Ref VpcId
+      VpcId: !ImportValue
+              'Fn::Sub': '${VPCStackName}-VPC'
       Tags:
       - Key: Name
         Value: Experian
@@ -134,7 +140,8 @@ Resources:
           FromPort: 22
           ToPort: 22
           CidrIp: 0.0.0.0/0
-      VpcId: !Ref VpcId
+      VpcId: !ImportValue
+              'Fn::Sub': '${VPCStackName}-VPC'
       Tags:
       - Key: Name
         Value: Bi Publisher
@@ -151,7 +158,8 @@ Resources:
           FromPort: 22
           ToPort: 22
           CidrIp: 0.0.0.0/0
-      VpcId: !Ref VpcId
+      VpcId: !ImportValue
+              'Fn::Sub': '${VPCStackName}-VPC'
       Tags:
       - Key: Name
         Value: Oracle OPA
@@ -168,7 +176,8 @@ Resources:
           FromPort: 22
           ToPort: 22
           CidrIp: 0.0.0.0/0
-      VpcId: !Ref VpcId
+      VpcId: !ImportValue
+              'Fn::Sub': '${VPCStackName}-VPC'
       Tags:
       - Key: Name
         Value: SailPoint
@@ -185,7 +194,8 @@ Resources:
           FromPort: 22
           ToPort: 22
           CidrIp: 0.0.0.0/0
-      VpcId: !Ref VpcId
+      VpcId: !ImportValue
+              'Fn::Sub': '${VPCStackName}-VPC'
       Tags:
       - Key: Name
         Value: Splunk
@@ -202,7 +212,8 @@ Resources:
           FromPort: 3389
           ToPort: 3389
           CidrIp: 0.0.0.0/0
-      VpcId: !Ref VpcId
+      VpcId: !ImportValue
+              'Fn::Sub': '${VPCStackName}-VPC'
       Tags:
       - Key: Name
         Value: AEM

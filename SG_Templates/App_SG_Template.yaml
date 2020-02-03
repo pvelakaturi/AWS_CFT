@@ -10,13 +10,13 @@ Metadata:
           - EnvType
       -
         Label:
-          default: "VPC"
+          default: "VPC Stack Name"
         Parameters:
-          - VpcId
+          - VPCStackName
 
     ParameterLabels:
-      VpcId:
-        default: "Which VPC should this template be deployed to?"
+      VPCStackName:
+        default: "Name of the VPC Stack in which these Security Groups belongs belong to."
 
       EnvType:
         default: Select a Environment Type
@@ -24,9 +24,10 @@ Metadata:
 ########################### PARAMETERS ##################################
 
 Parameters:
-  VpcId:
-    Type: AWS::EC2::VPC::Id
-
+  VPCStackName:
+    #Description: Name of the VPC Stack in which these Security Groups belongs belong to.
+    Type: String
+    AllowedPattern: '[a-zA-Z][-a-zA-Z0-9]*$'
 
   EnvType:
     Type: String
@@ -51,7 +52,8 @@ Resources:
           FromPort: 22
           ToPort: 22
           CidrIp: 0.0.0.0/0
-      VpcId: !Ref VpcId
+      VpcId: !ImportValue
+              'Fn::Sub': '${VPCStackName}-VPC'
       Tags:
       - Key: Name
         Value: CustomerHTTPServer
@@ -68,7 +70,8 @@ Resources:
           FromPort: 22
           ToPort: 22
           CidrIp: 0.0.0.0/0
-      VpcId: !Ref VpcId
+      VpcId: !ImportValue
+              'Fn::Sub': '${VPCStackName}-VPC'
       Tags:
       - Key: Name
         Value: WorkerPortal
@@ -85,7 +88,8 @@ Resources:
           FromPort: 22
           ToPort: 22
           CidrIp: 0.0.0.0/0
-      VpcId: !Ref VpcId
+      VpcId: !ImportValue
+              'Fn::Sub': '${VPCStackName}-VPC'
       Tags:
       - Key: Name
         Value: CustomerPortal
@@ -102,7 +106,8 @@ Resources:
           FromPort: 22
           ToPort: 22
           CidrIp: 0.0.0.0/0
-      VpcId: !Ref VpcId
+      VpcId: !ImportValue
+              'Fn::Sub': '${VPCStackName}-VPC'
       Tags:
       - Key: Name
         Value: Batch
@@ -119,7 +124,8 @@ Resources:
           FromPort: 22
           ToPort: 22
           CidrIp: 0.0.0.0/0
-      VpcId: !Ref VpcId
+      VpcId: !ImportValue
+              'Fn::Sub': '${VPCStackName}-VPC'
       Tags:
       - Key: Name
         Value: SFTP
@@ -136,7 +142,8 @@ Resources:
           FromPort: 22
           ToPort: 22
           CidrIp: 0.0.0.0/0
-      VpcId: !Ref VpcId
+      VpcId: !ImportValue
+              'Fn::Sub': '${VPCStackName}-VPC'
       Tags:
       - Key: Name
         Value: EnterpriseDB

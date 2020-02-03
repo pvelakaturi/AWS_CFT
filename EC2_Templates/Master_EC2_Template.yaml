@@ -1,0 +1,112 @@
+AWSTemplateFormatVersion: 2010-09-09
+
+#################################PARAMETERS#####################################
+
+Parameters:
+  VPCStackName:
+    Description: Name of the Security Group Stack in which these Security Groups belongs belong to.
+    Type: String
+    AllowedPattern: '[a-zA-Z][-a-zA-Z0-9]*$'
+
+  EnvType:
+    Description: Select a Environment Type
+    Type: String
+    AllowedValues:
+      - PRD
+      - NONPRD
+
+  InstanceOS:
+    Description: Select the desired OS.
+    Type: String
+    AllowedValues:
+      - RHEL7.7
+      - Windows
+    ConstraintDescription: Must select either RHEL 7.7 or Windows.
+
+  InstanceCount:
+    Description: Number of EC2 instances (must be between 1 and 6).
+    Type: Number
+    Default: 1
+    MinValue: 1
+    MaxValue: 6
+    ConstraintDescription: Must be a number between 1 and 6.
+
+  InstanceType:
+    Description: Type of EC2 instance to launch for the server.
+    Type: String
+    ConstraintDescription: Must be a valid EC2 instance type.
+    AllowedValues:
+      - c5.large
+      - c5.xlarge
+      - c5.2xlarge
+      - c5.4xlarge
+      - m5.large
+      - m5.xlarge
+      - m5.2xlarge
+      - m5.4xlarge
+      - r5.large
+      - r5.xlarge
+      - r5.2xlarge
+      - r5.4xlarge
+      - r5.8xlarge
+      - r5.12xlarge
+
+  InstanceTagName:
+    Description: Instance Name tag that will be used to define the Name of the instance resource(s)
+    Type: String
+
+  InstanceHasFTI:
+    Description: Does the Instance have FTI?
+    Type: String
+    AllowedValues:
+      - true
+      - false
+
+  InstanceSecurityGroup:
+    Description: Security Group for the EC2 instance
+    Type: AWS::EC2::SecurityGroup::Id
+
+  AMI:
+    Description: AMI for the instance image
+    Type: String
+
+############################## CONDITIONS #####################################
+
+Conditions:
+  RHEL: !Equals [!Ref InstanceOS, RHEL7.7]
+  Windows: !Equals [!Ref InstanceOS, Windows]
+
+##########################RESOURCES#############################################
+
+Resources:
+  RHELEC2Stack:
+    Type: AWS::CloudFormation::Stack
+    Condition: RHEL
+    Properties:
+      TemplateURL: https://cftbuckettesting92839.s3.amazonaws.com/RHEL_EC2_Template.yaml
+      TimeoutInMinutes: '5'
+      Parameters:
+        VPCStackName: !Ref VPCStackName
+        EnvType: !Ref EnvType
+        InstanceCount: !Ref InstanceCount
+        InstanceType: !Ref InstanceType
+        InstanceTagName: !Ref InstanceTagName
+        InstanceHasFTI: !Ref InstanceHasFTI
+        InstanceSecurityGroup: !Ref InstanceSecurityGroup
+        AMI: !Ref AMI
+
+  WindowsEC2Stack:
+    Type: AWS::CloudFormation::Stack
+    Condition: Windows
+    Properties:
+      TemplateURL: https://cftbuckettesting92839.s3.amazonaws.com/Windows_EC2_Template.yaml
+      TimeoutInMinutes: '5'
+      Parameters:
+        VPCStackName: !Ref VPCStackName
+        EnvType: !Ref EnvType
+        InstanceCount: !Ref InstanceCount
+        InstanceType: !Ref InstanceType
+        InstanceTagName: !Ref InstanceTagName
+        InstanceHasFTI: !Ref InstanceHasFTI
+        InstanceSecurityGroup: !Ref InstanceSecurityGroup
+        AMI: !Ref AMI

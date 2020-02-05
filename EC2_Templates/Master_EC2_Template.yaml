@@ -15,14 +15,6 @@ Parameters:
       - PRD
       - NONPRD
 
-  InstanceOS:
-    Description: Select the desired OS.
-    Type: String
-    AllowedValues:
-      - RHEL7.7
-      - Windows
-    ConstraintDescription: Must select either RHEL 7.7 or Windows.
-
   InstanceCount:
     Description: Number of EC2 instances (must be between 1 and 6).
     Type: Number
@@ -36,6 +28,7 @@ Parameters:
     Type: String
     ConstraintDescription: Must be a valid EC2 instance type.
     AllowedValues:
+      - t3.medium
       - c5.large
       - c5.xlarge
       - c5.2xlarge
@@ -73,40 +66,208 @@ Parameters:
 ############################## CONDITIONS #####################################
 
 Conditions:
-  RHEL: !Equals [!Ref InstanceOS, RHEL7.7]
-  Windows: !Equals [!Ref InstanceOS, Windows]
+    Launch1: !Equals [1, 1]
+    Launch2: !Not [!Equals [1, !Ref InstanceCount]]
+    Launch3: !And
+    - !Not [!Equals [1, !Ref InstanceCount]]
+    - !Not [!Equals [2, !Ref InstanceCount]]
+    Launch4: !And
+    - !Not [!Equals [1, !Ref InstanceCount]]
+    - !Not [!Equals [2, !Ref InstanceCount]]
+    - !Not [!Equals [3, !Ref InstanceCount]]
+    Launch5: !Or
+    - !Equals [5, !Ref InstanceCount]
+    - !Equals [6, !Ref InstanceCount]
+    Launch6: !Equals [6, !Ref InstanceCount]
 
 ##########################RESOURCES#############################################
 
 Resources:
-  RHELEC2Stack:
-    Type: AWS::CloudFormation::Stack
-    Condition: RHEL
+  Instance1:
+    Condition: Launch1
+    Description: Worker Portal (Production environment) EC2 Instance.
+    Type: AWS::EC2::Instance
     Properties:
-      TemplateURL: https://cftbuckettesting92839.s3.amazonaws.com/RHEL_EC2_Template.yaml
-      TimeoutInMinutes: '5'
-      Parameters:
-        VPCStackName: !Ref VPCStackName
-        EnvType: !Ref EnvType
-        InstanceCount: !Ref InstanceCount
-        InstanceType: !Ref InstanceType
-        InstanceTagName: !Ref InstanceTagName
-        InstanceHasFTI: !Ref InstanceHasFTI
-        InstanceSecurityGroup: !Ref InstanceSecurityGroup
-        AMI: !Ref AMI
+      NetworkInterfaces:
+        - GroupSet:
+            - !Ref InstanceSecurityGroup
+          AssociatePublicIpAddress: 'true'
+          DeviceIndex: '0'
+          DeleteOnTermination: 'true'
+          SubnetId: !ImportValue
+                  'Fn::Sub': '${VPCStackName}-InternalASubnet'
+      ImageId: !Ref AMI
+      InstanceType: !Ref InstanceType
+      AvailabilityZone: !Select [0, !GetAZs '']
+      Tags:
+        - Key: Name
+          Value: !Ref InstanceTagName
+        - Key: Host Name
+          Value: !Join ["", [GAIES, !Ref EnvType, !Ref InstanceTagName, 01]]
+        - Key: FTI
+          Value: !Ref InstanceHasFTI
 
-  WindowsEC2Stack:
-    Type: AWS::CloudFormation::Stack
-    Condition: Windows
+  Instance2:
+    Condition: Launch2
+    Description: Worker Portal (Production environment) EC2 Instance.
+    Type: AWS::EC2::Instance
     Properties:
-      TemplateURL: https://cftbuckettesting92839.s3.amazonaws.com/Windows_EC2_Template.yaml
-      TimeoutInMinutes: '5'
-      Parameters:
-        VPCStackName: !Ref VPCStackName
-        EnvType: !Ref EnvType
-        InstanceCount: !Ref InstanceCount
-        InstanceType: !Ref InstanceType
-        InstanceTagName: !Ref InstanceTagName
-        InstanceHasFTI: !Ref InstanceHasFTI
-        InstanceSecurityGroup: !Ref InstanceSecurityGroup
-        AMI: !Ref AMI
+      NetworkInterfaces:
+        - GroupSet:
+            - !Ref InstanceSecurityGroup
+          AssociatePublicIpAddress: 'true'
+          DeviceIndex: '0'
+          DeleteOnTermination: 'true'
+          SubnetId: !ImportValue
+                  'Fn::Sub': '${VPCStackName}-InternalBSubnet'
+      ImageId: !Ref AMI
+      InstanceType: !Ref InstanceType
+      AvailabilityZone: !Select [1, !GetAZs '']
+      Tags:
+        - Key: Name
+          Value: !Ref InstanceTagName
+        - Key: Host Name
+          Value: !Join ["", [GAIES, !Ref EnvType, !Ref InstanceTagName, 02]]
+        - Key: FTI
+          Value: !Ref InstanceHasFTI
+
+  Instance3:
+    Condition: Launch3
+    Description: Worker Portal (Production environment) EC2 Instance.
+    Type: AWS::EC2::Instance
+    Properties:
+      NetworkInterfaces:
+        - GroupSet:
+            - !Ref InstanceSecurityGroup
+          AssociatePublicIpAddress: 'true'
+          DeviceIndex: '0'
+          DeleteOnTermination: 'true'
+          SubnetId: !ImportValue
+                  'Fn::Sub': '${VPCStackName}-InternalASubnet'
+      ImageId: !Ref AMI
+      InstanceType: !Ref InstanceType
+      AvailabilityZone: !Select [0, !GetAZs '']
+      Tags:
+        - Key: Name
+          Value: !Ref InstanceTagName
+        - Key: Host Name
+          Value: !Join ["", [GAIES, !Ref EnvType, !Ref InstanceTagName, 03]]
+        - Key: FTI
+          Value: !Ref InstanceHasFTI
+
+  Instance4:
+    Condition: Launch4
+    Description: Worker Portal (Production environment) EC2 Instance.
+    Type: AWS::EC2::Instance
+    Properties:
+      NetworkInterfaces:
+        - GroupSet:
+            - !Ref InstanceSecurityGroup
+          AssociatePublicIpAddress: 'true'
+          DeviceIndex: '0'
+          DeleteOnTermination: 'true'
+          SubnetId: !ImportValue
+                  'Fn::Sub': '${VPCStackName}-InternalBSubnet'
+      ImageId: !Ref AMI
+      InstanceType: !Ref InstanceType
+      AvailabilityZone: !Select [1, !GetAZs '']
+      Tags:
+        - Key: Name
+          Value: !Ref InstanceTagName
+        - Key: Host Name
+          Value: !Join ["", [GAIES, !Ref EnvType, !Ref InstanceTagName, 04]]
+        - Key: FTI
+          Value: !Ref InstanceHasFTI
+
+  Instance5:
+    Condition: Launch5
+    Description: Worker Portal (Production environment) EC2 Instance.
+    Type: AWS::EC2::Instance
+    Properties:
+      NetworkInterfaces:
+        - GroupSet:
+            - !Ref InstanceSecurityGroup
+          AssociatePublicIpAddress: 'true'
+          DeviceIndex: '0'
+          DeleteOnTermination: 'true'
+          SubnetId: !ImportValue
+                  'Fn::Sub': '${VPCStackName}-InternalASubnet'
+      ImageId: !Ref AMI
+      InstanceType: !Ref InstanceType
+      AvailabilityZone: !Select [0, !GetAZs '']
+      Tags:
+        - Key: Name
+          Value: !Ref InstanceTagName
+        - Key: Host Name
+          Value: !Join ["", [GAIES, !Ref EnvType, !Ref InstanceTagName, 05]]
+        - Key: FTI
+          Value: !Ref InstanceHasFTI
+
+  Instance6:
+    Condition: Launch6
+    Description: Worker Portal (Production environment) EC2 Instance.
+    Type: AWS::EC2::Instance
+    Properties:
+      NetworkInterfaces:
+        - GroupSet:
+            - !Ref InstanceSecurityGroup
+          AssociatePublicIpAddress: 'true'
+          DeviceIndex: '0'
+          DeleteOnTermination: 'true'
+          SubnetId: !ImportValue
+                  'Fn::Sub': '${VPCStackName}-InternalBSubnet'
+      ImageId: !Ref AMI
+      InstanceType: !Ref InstanceType
+      AvailabilityZone: !Select [1, !GetAZs '']
+      Tags:
+        - Key: Name
+          Value: !Ref InstanceTagName
+        - Key: Host Name
+          Value: !Join ["", [GAIES, !Ref EnvType, !Ref InstanceTagName, 06]]
+        - Key: FTI
+          Value: !Ref InstanceHasFTI
+
+################################### OUTPUTS ##################################
+
+Outputs:
+  Instance1:
+    Condition: Launch1
+    Description: Instance1
+    Value: !Ref Instance1
+    Export:
+      Name: !Join ["", [GAIES, !Ref EnvType, !Ref InstanceTagName, 01]]
+
+  Instance2:
+    Condition: Launch2
+    Description: Instance 2
+    Value: !Ref Instance2
+    Export:
+      Name: !Join ["", [GAIES, !Ref EnvType, !Ref InstanceTagName, 02]]
+
+  Instance3:
+    Condition: Launch3
+    Description: Instance 3
+    Value: !Ref Instance3
+    Export:
+      Name: !Join ["", [GAIES, !Ref EnvType, !Ref InstanceTagName, 03]]
+
+  Instance4:
+    Condition: Launch4
+    Description: Instance 4
+    Value: !Ref Instance4
+    Export:
+      Name: !Join ["", [GAIES, !Ref EnvType, !Ref InstanceTagName, 04]]
+
+  Instance5:
+    Condition: Launch5
+    Description: Instance 5
+    Value: !Ref Instance5
+    Export:
+      Name: !Join ["", [GAIES, !Ref EnvType, !Ref InstanceTagName, 05]]
+
+  Instance6:
+    Condition: Launch6
+    Description: Instance 6
+    Value: !Ref Instance6
+    Export:
+      Name: !Join ["", [GAIES, !Ref EnvType, !Ref InstanceTagName, 06]]

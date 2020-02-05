@@ -1,0 +1,50 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Parameters:
+  BuildAccountId:
+    Type: String
+  BuildAccountRoleName:
+    Type: String
+    Default: GAIESBuildAccountRole
+  MgmtAccountRoleName:
+    Type: String
+    Default: GAIESMgmtAccountRole
+Resources:
+  MgmtAccountRole:
+    Type: "AWS::IAM::Role"
+    Properties:
+      RoleName: !Ref MgmtAccountRoleName 
+      AssumeRolePolicyDocument:
+        Version: 2012-10-17
+        Statement:
+        - Effect: Allow
+          Principal:
+            Service: lambda.amazonaws.com
+          Action: sts:AssumeRole
+      Policies:
+      - PolicyName: AssumeRole
+        PolicyDocument:
+          Version: '2012-10-17'
+          Statement:
+          - Effect: Allow
+            Action:
+            - logs:CreateLogGroup
+            - logs:CreateLogStream
+            - logs:PutLogEvents
+            - cloudformation:DescribeStacks
+            - lambda:AddPermission
+            - lambda:RemovePermission
+            - events:PutRule
+            - events:DeleteRule
+            - events:PutTargets
+            - events:RemoveTargets
+            Resource:  "*"
+          #- Effect: Allow
+          #  Action:
+          #  - iam:PassRole
+          #  Resource:  !GetAtt ControlPlaneRole.Arn
+          - Action: "sts:AssumeRole"
+            Effect: Allow
+            Resource: !Sub "arn:aws:iam::${BuildAccountId}:role/${BuildAccountRoleName}"
+Outputs:
+  MgmtAccountRoleArn:
+    Value: !GetAtt MgmtAccountRole.Arn   

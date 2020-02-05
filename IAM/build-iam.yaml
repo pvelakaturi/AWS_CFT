@@ -1,0 +1,45 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Parameters:
+  MgmtAccountId:
+    Type: String
+  MgmtAccountRoleName:
+    Type: String
+    Default: GAIESMgmtAccountRole
+  BuildAccountRoleName:
+    Type: String
+    Default: GAIESBuildAccountRole
+Resources:
+  BuildAccountRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: !Ref BuildAccountRoleName
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+        - Effect: Allow
+          Principal:
+            AWS: !Sub 'arn:aws:iam::${MgmtAccountId}:role/${MgmtAccountRoleName}'
+          Action: sts:AssumeRole
+      Path: /
+      Policies:
+      - PolicyName: CfnStackAssumeRole
+        PolicyDocument:
+          Version: '2012-10-17'
+          Statement:
+          - Effect: Allow
+            Action: 
+            - 'cloudformation:CreateStack'
+            - 'cloudformation:UpdateStack'
+            - 'cloudformation:DeleteStack'
+            - 'cloudformation:DescribeStacks'
+            Resource: "*"
+          - Effect: Allow
+            Action: 
+            - 's3:CreateBucket'
+            - 's3:DeleteBucket'
+            - 's3:DeleteBucket*'
+            - 's3:PutBucket*'
+            Resource: "*"
+Outputs:
+  BuildAccountRoleArn:
+    Value: !GetAtt BuildAccountRole.Arn

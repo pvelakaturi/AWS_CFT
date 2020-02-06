@@ -30,6 +30,10 @@ prep:
 DeployDev:
   stage: DEV1
   script:
+    - sudo pip install boto boto3 netaddr passlib
+    - export AWS_PROFILE=mgmt
+    - pwd
+    - export PATH=$PATH:/usr/local/bin
     - ansible --version
     - ansible-playbook /home/gitlab-runner/builds/G1RPJgRJ/0/root/georgiaies_main/ansible_app_deploy.yml
   artifacts:

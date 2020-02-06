@@ -34,7 +34,7 @@
       disable_rollback: true
       template:  "/home/gitlab-runner/builds/G1RPJgRJ/0/root/georgiaies_main/app_vpc_root.yaml"
       template_parameters:
-          Env: Prod
+          Env: "Prod"
           CidrBlock: "10.10.0.0/16"
           DMZASubnetCIDR: "10.10.10.0/24"
           DMZBSubnetCIDR: "10.10.20.0/24"
@@ -42,7 +42,6 @@
           AppBSubnetCIDR: "10.10.40.0/24"
           DatabaseASubnetCIDR: "10.10.50.0/24"
           DatabaseBSubnetCIDR: "10.10.60.0/24"
-
 
       tags:
            Stack: "prod-application-cloudformation-cicd"

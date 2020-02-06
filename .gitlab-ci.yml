@@ -2,7 +2,7 @@ image:
   name: gaiescicd
 
 stages:
-  - deploy
+  - DEV1
   - SIT1
   - SIT2
 
@@ -12,13 +12,14 @@ cache:
   policy: pull-push
 
 prep:
-  stage: deploy
+  stage: DEV1
   script:
     - sudo pip install boto boto3 netaddr passlib
     - export AWS_PROFILE=mgmt
     - pwd
     - export PATH=$PATH:/usr/local/bin
     - ansible --version
+    - ansible-playbook /home/gitlab-runner/gaies-playbook/test-uploads3-play.yml
   artifacts:
     untracked: true
     when: always
@@ -27,7 +28,7 @@ prep:
 
 
 DeployDev:
-  stage: deploy
+  stage: DEV1
   script:
     - ansible --version
     - ansible-playbook /home/gitlab-runner/gaies-playbook/test-sg-play.yml

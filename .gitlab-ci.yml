@@ -11,13 +11,24 @@ cache:
   untracked: true
   policy: pull-push
 
-DeployDev:
+prep:
   stage: deploy
   script:
     - sudo pip install boto boto3 netaddr passlib
     - export AWS_PROFILE=mgmt
     - pwd
     - export PATH=$PATH:/usr/local/bin
+    - ansible --version
+  artifacts:
+    untracked: true
+    when: always
+  allow_failure: true
+  when: manual
+
+
+DeployDev:
+  stage: deploy
+  script:
     - ansible --version
     - ansible-playbook /home/gitlab-runner/gaies-playbook/test-sg-play.yml
   artifacts:

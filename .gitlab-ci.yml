@@ -1,0 +1,43 @@
+image:
+  name: gaiescicd
+
+stages:
+  - deploy
+  - SIT1
+  - SIT2
+
+cache:
+  key: demo
+  untracked: true
+  policy: pull-push
+
+DeployDev:
+  stage: deploy
+  script:
+    - sudo pip install boto boto3 netaddr passlib
+    - export AWS_PROFILE=mgmt
+    - pwd
+    - export PATH=$PATH:/usr/local/bin
+    - ansible --version
+    - ansible-playbook /home/gitlab-runner/gaies-playbook/test-sg-play.yml
+  artifacts:
+    untracked: true
+    when: always
+  allow_failure: true
+  when: manual
+
+SIT1:
+  stage: SIT1
+  dependencies:
+    - DeployDev
+  variables:
+    ANSIBLE_HOST_KEY_CHECKING: "False"
+  script:
+    - sudo pip install boto boto3 netaddr passlib
+    - export AWS_PROFILE=mgmt
+    - pwd
+    - export PATH=$PATH:/usr/local/bin
+    - ansible --version
+    - ansible-playbook /home/gitlab-runner/gaies-playbook/test-sg-play.yml
+  allow_failure: true
+  when: manual 

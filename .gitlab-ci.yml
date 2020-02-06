@@ -19,7 +19,7 @@ prep:
     - pwd
     - export PATH=$PATH:/usr/local/bin
     - ansible --version
-    - ansible-playbook /home/gitlab-runner/gaies-playbook/test-uploads3-play.yml
+    - ansible-playbook /home/gitlab-runner/builds/G1RPJgRJ/0/root/georgiaies_main/ansible_cft_s3_upload.yml
   artifacts:
     untracked: true
     when: always
@@ -31,7 +31,7 @@ DeployDev:
   stage: DEV1
   script:
     - ansible --version
-    - ansible-playbook /home/gitlab-runner/gaies-playbook/test-sg-play.yml
+    - ansible-playbook /home/gitlab-runner/builds/G1RPJgRJ/0/root/georgiaies_main/ansible_app_deploy.yml
   artifacts:
     untracked: true
     when: always

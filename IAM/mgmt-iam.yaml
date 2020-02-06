@@ -4,15 +4,15 @@ Parameters:
     Type: String
   BuildAccountRoleName:
     Type: String
-    Default: GAIESBuildAccountRole
-  MgmtAccountRoleName:
+    Default: GAIESBuildAccountCFTRole
+  MgmtAccountSharedServcieRoleName:
     Type: String
-    Default: GAIESMgmtAccountRole
+    Default: GAIESMgmtAccountSharedServiceRole
 Resources:
-  MgmtAccountRole:
+  MgmtAccountSharedServciesRole:
     Type: "AWS::IAM::Role"
     Properties:
-      RoleName: !Ref MgmtAccountRoleName 
+      RoleName: !Ref MgmtAccountSharedServcieRoleName 
       AssumeRolePolicyDocument:
         Version: 2012-10-17
         Statement:
@@ -47,4 +47,4 @@ Resources:
             Resource: !Sub "arn:aws:iam::${BuildAccountId}:role/${BuildAccountRoleName}"
 Outputs:
   MgmtAccountRoleArn:
-    Value: !GetAtt MgmtAccountRole.Arn   
+    Value: !GetAtt MgmtAccountSharedServciesRole.Arn   

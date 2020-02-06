@@ -1,0 +1,11 @@
+---
+- name: APP SG Ansible CFT
+  hosts: localhost
+  connection: local
+  gather_facts: false
+
+  tasks:
+  - name: cft files upload to s3 to refer in nested stack for cross accounts
+    s3_sync:
+      bucket: gaies-mgmt-s3-bucket
+      file_root: /home/gitlab-runner/builds/G1RPJgRJ/0/root/georgiaies_main

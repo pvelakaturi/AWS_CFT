@@ -1,0 +1,38 @@
+---
+- name: APP SG Ansible CFT
+  hosts: localhost
+  connection: local
+  gather_facts: false
+
+  tasks:
+  - name: Run SG CFT to demo local account run
+    cloudformation:
+       stack_name: "AppSGStack"
+       state: "present"
+       region: "us-east-1"
+       disable_rollback: true
+       template: "/home/gitlab-runner/builds/G1RPJgRJ/0/root/georgiaies_main/SG_Templates/App_SG_Template.yaml"
+       template_parameters:
+          VPCStackName: "vpc-0a57ed84051fcd058"
+          EnvType: "ManagementVPCStack"
+       tags:
+           Stack: "SG-ansible-cloudformation"
+  - name: Run whole Application stack Deployment throuhg CFT in build account and demo cross account deployments through STS assume roles
+    sts_assume_role:
+      role_arn: "arn:aws:iam::069962244880:role/GAIESBuildAccountCFTRole"
+      role_session_name: "buildRoleSession"
+      region: us-east-1
+    register: assumed_role
+  - cloudformation:
+      aws_access_key: "{{ assumed_role.sts_creds.access_key }}"
+      aws_secret_key: "{{ assumed_role.sts_creds.secret_key }}"
+      security_token: "{{ assumed_role.sts_creds.session_token }}"
+      stack_name: "DEVAppSGStack"
+      state: "present"
+      region: "us-east-1"
+      disable_rollback: true
+      template:  "/home/gitlab-runner/builds/G1RPJgRJ/0/root/georgiaies_main/app_vpc_root.yaml"
+      template_parameters:
+          dist: "{{ lookup('file', '/home/gitlab-runner/builds/G1RPJgRJ/0/root/georgiaies_main/Parameters_Templates/production_network_param.json') }}"
+      tags:
+           Stack: "prod-application-cloudformation-cicd"

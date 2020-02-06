@@ -149,7 +149,7 @@ Resources:
     Type: AWS::CloudFormation::Stack
     Condition: ProdVPC
     Properties:
-      TemplateURL: https://cftbuckettesting92839.s3.amazonaws.com/VPC_Templates/App_Network_Template.yaml
+      TemplateURL: https://gaies-mgmt-s3-bucket.s3.amazonaws.com/VPC_Templates/App_Network_Template.yaml
       TimeoutInMinutes: '5'
       Parameters:
         VPCName: ProdVPC
@@ -165,10 +165,10 @@ Resources:
     Type: AWS::CloudFormation::Stack
     Condition: NonProdVPC
     Properties:
-      TemplateURL: https://cftbuckettesting92839.s3.amazonaws.com/VPC_Templates/App_Network_Template.yaml
+      TemplateURL: https://gaies-mgmt-s3-bucket.s3.amazonaws.com/VPC_Templates/App_Network_Template.yaml
       TimeoutInMinutes: '5'
       Parameters:
-        VPCName: !Ref VPCName
+        VPCName: NonProdVPC
         CidrBlock: !Ref CidrBlock
         DMZASubnetCIDR: !Ref DMZASubnetCIDR
         DMZBSubnetCIDR: !Ref DMZBSubnetCIDR
@@ -181,10 +181,10 @@ Resources:
     Type: AWS::CloudFormation::Stack
     Condition: BuildVPC
     Properties:
-      TemplateURL: https://cftbuckettesting92839.s3.amazonaws.com/VPC_Templates/App_Network_Template.yaml
+      TemplateURL: https://gaies-mgmt-s3-bucket.s3.amazonaws.com/VPC_Templates/App_Network_Template.yaml
       TimeoutInMinutes: '5'
       Parameters:
-        VPCName: !Ref VPCName
+        VPCName: BuildVPC
         CidrBlock: !Ref CidrBlock
         AppASubnetCIDR: !Ref AppASubnetCIDR
         DatabaseASubnetCIDR: !Ref DatabaseASubnetCIDR
@@ -195,20 +195,29 @@ Resources:
     Type: AWS::CloudFormation::Stack
     Condition: ProdAppSG
     Properties:
-      TemplateURL: https://cftbuckettesting92839.s3.amazonaws.com/SG_Templates/App_SG_Template.yaml
+      TemplateURL: https://gaies-mgmt-s3-bucket.s3.amazonaws.com/SG_Templates/App_SG_Template.yaml
       TimeoutInMinutes: '5'
+      Parameters: 
+        VPCStackName: ProdVPCStack
+        EnvType: prod
   UATAppSGStack:
     Type: AWS::CloudFormation::Stack
     Condition: UATAppSG
     Properties:
-      TemplateURL: https://cftbuckettesting92839.s3.amazonaws.com/SG_Templates/App_SG_Template.yaml
+      TemplateURL: https://gaies-mgmt-s3-bucket.s3.amazonaws.com/SG_Templates/App_SG_Template.yaml
       TimeoutInMinutes: '5'
+      Parameters: 
+        VPCStackName: NonProdVPCStack
+        EnvType: uat
   DEV1AppSGStack:
     Type: AWS::CloudFormation::Stack
     Condition: DEV1AppSG
     Properties:
-      TemplateURL: https://cftbuckettesting92839.s3.amazonaws.com/SG_Templates/App_SG_Template.yaml
+      TemplateURL: https://gaies-mgmt-s3-bucket.s3.amazonaws.com/SG_Templates/App_SG_Template.yaml
       TimeoutInMinutes: '5'
+      Parameters: 
+        VPCStackName: BuildVPCStack
+        EnvType: dev1
 
 
 ###############################EC2 stacks#####################################
@@ -216,7 +225,7 @@ Resources:
   ProdWPEC2Stack:
     Type: AWS::CloudFormation::Stack
     Properties:
-      TemplateURL: https://cftbuckettesting92839.s3.amazonaws.com/EC2_Templates/Master_EC2_Template.yaml
+      TemplateURL: https://gaies-mgmt-s3-bucket.s3.amazonaws.com/EC2_Templates/Master_EC2_Template.yaml
       TimeoutInMinutes: '5'
       Parameters:
         VPCStackName: 'ProdVPCStack'
@@ -232,7 +241,7 @@ Resources:
   ProdCPEC2Stack:
     Type: AWS::CloudFormation::Stack
     Properties:
-      TemplateURL: https://cftbuckettesting92839.s3.amazonaws.com/EC2_Templates/Master_EC2_Template.yaml
+      TemplateURL: https://gaies-mgmt-s3-bucket.s3.amazonaws.com/EC2_Templates/Master_EC2_Template.yaml
       TimeoutInMinutes: '5'
       Parameters:
         VPCStackName: 'ProdVPCStack'
@@ -248,7 +257,7 @@ Resources:
   ProdIHSEC2Stack:
     Type: AWS::CloudFormation::Stack
     Properties:
-      TemplateURL: https://cftbuckettesting92839.s3.amazonaws.com/EC2_Templates/Master_EC2_Template.yaml
+      TemplateURL: https://gaies-mgmt-s3-bucket.s3.amazonaws.com/EC2_Templates/Master_EC2_Template.yaml
       TimeoutInMinutes: '5'
       Parameters:
         VPCStackName: 'ProdVPCStack'
@@ -264,7 +273,7 @@ Resources:
   ProdOracleEC2Stack:
     Type: AWS::CloudFormation::Stack
     Properties:
-      TemplateURL: https://cftbuckettesting92839.s3.amazonaws.com/EC2_Templates/Master_EC2_Template.yaml
+      TemplateURL: https://gaies-mgmt-s3-bucket.s3.amazonaws.com/EC2_Templates/Master_EC2_Template.yaml
       TimeoutInMinutes: '5'
       Parameters:
         VPCStackName: 'ProdVPCStack'

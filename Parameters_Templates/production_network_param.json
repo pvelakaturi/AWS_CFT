@@ -1,7 +1,7 @@
 [
   {
-    "ParameterKey": "VPCName",
-    "ParameterValue": "ProductionNetworkStack"
+    "ParameterKey": "Env",
+    "ParameterValue": "Prod"
   },
   {
     "ParameterKey": "CidrBlock",

@@ -13,17 +13,18 @@
        disable_rollback: true
        template: "/home/gitlab-runner/builds/G1RPJgRJ/0/root/georgiaies_main/SG_Templates/App_SG_Template.yaml"
        template_parameters:
-          VPCStackName: "vpc-0a57ed84051fcd058"
-          EnvType: "ManagementVPCStack"
+          VPCStackName: "ManagementVPCStack"
+          EnvType: "dev"
        tags:
            Stack: "SG-ansible-cloudformation"
-  - name: Run whole Application stack Deployment throuhg CFT in build account and demo cross account deployments through STS assume roles
+  - name: assume the build role in another account
     sts_assume_role:
       role_arn: "arn:aws:iam::069962244880:role/GAIESBuildAccountCFTRole"
       role_session_name: "buildRoleSession"
       region: us-east-1
     register: assumed_role
-  - cloudformation:
+  - name: Run whole Application stack Deployment throuhg CFT in build account and demo cross account deployments through STS assume roles
+    cloudformation:
       aws_access_key: "{{ assumed_role.sts_creds.access_key }}"
       aws_secret_key: "{{ assumed_role.sts_creds.secret_key }}"
       security_token: "{{ assumed_role.sts_creds.session_token }}"
@@ -33,6 +34,15 @@
       disable_rollback: true
       template:  "/home/gitlab-runner/builds/G1RPJgRJ/0/root/georgiaies_main/app_vpc_root.yaml"
       template_parameters:
-          dist: "{{ lookup('file', '/home/gitlab-runner/builds/G1RPJgRJ/0/root/georgiaies_main/Parameters_Templates/production_network_param.json') }}"
+          Env: Prod
+          CidrBlock: "10.10.0.0/16"
+          DMZASubnetCIDR: "10.10.10.0/24"
+          DMZBSubnetCIDR: "10.10.20.0/24"
+          AppASubnetCIDR: "10.10.30.0/24"
+          AppBSubnetCIDR: "10.10.40.0/24"
+          DatabaseASubnetCIDR: "10.10.50.0/24"
+          DatabaseBSubnetCIDR: "10.10.60.0/24"
+
+
       tags:
            Stack: "prod-application-cloudformation-cicd"

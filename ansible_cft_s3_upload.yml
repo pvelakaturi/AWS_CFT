@@ -1,5 +1,5 @@
 ---
-- name: APP SG Ansible CFT
+- name: CFTs Upload to S3
   hosts: localhost
   connection: local
   gather_facts: false

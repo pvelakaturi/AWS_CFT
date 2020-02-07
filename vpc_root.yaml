@@ -125,12 +125,6 @@ Conditions:
   BuildVPC:
     !Or [!Equals [!Ref Env, DEV1], !Equals [!Ref Env, DEV2], !Equals [!Ref Env, SIT1], !Equals [!Ref Env, SIT2]]
 
-  ProdAppSG:
-    !Equals [!Ref Env, Prod]
-  UATAppSG:
-    !Equals [!Ref Env, UAT]
-  DEV1AppSG:
-    !Equals [!Ref Env, DEV1]
 
 ######################################RESOURCES################################
 

@@ -28,13 +28,13 @@
       aws_access_key: "{{ assumed_role.sts_creds.access_key }}"
       aws_secret_key: "{{ assumed_role.sts_creds.secret_key }}"
       security_token: "{{ assumed_role.sts_creds.session_token }}"
-      stack_name: "ProdAppStack"
+      stack_name: "ProdVPCStack"
       state: "present"
       region: "us-east-1"
       disable_rollback: true
       template:  "/home/gitlab-runner/builds/G1RPJgRJ/0/root/georgiaies_main/vpc_root.yaml"
       template_parameters:
-          Env: "Prod"
+          VPCName: "ProdVPC"
           CidrBlock: "10.10.0.0/16"
           DMZASubnetCIDR: "10.10.10.0/24"
           DMZBSubnetCIDR: "10.10.20.0/24"
@@ -56,7 +56,6 @@
       disable_rollback: true
       template:  "/home/gitlab-runner/builds/G1RPJgRJ/0/root/georgiaies_main/app_root.yaml"
       template_parameters:
-          Env: "Prod"
-
+          Env: "prod"
       tags:
            Stack: "prod-application-cloudformation-cicd"

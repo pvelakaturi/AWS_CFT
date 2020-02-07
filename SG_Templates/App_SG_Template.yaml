@@ -7,7 +7,7 @@ Metadata:
         Label:
           default: "Environment Type"
         Parameters:
-          - EnvType
+          - Env
       -
         Label:
           default: "VPC Stack Name"
@@ -18,7 +18,7 @@ Metadata:
       VPCStackName:
         default: "Name of the VPC Stack in which these Security Groups belongs belong to."
 
-      EnvType:
+      Env:
         default: Select a Environment Type
 
 ########################### PARAMETERS ##################################
@@ -29,7 +29,7 @@ Parameters:
     Type: String
     AllowedPattern: '[a-zA-Z][-a-zA-Z0-9]*$'
 
-  EnvType:
+  Env:
     Type: String
     Default: dev
     AllowedValues: [dev, dev1, dev2, sit, sit1, prod, pre-prod, uat, trn]
@@ -46,7 +46,7 @@ Resources:
     Type: AWS::EC2::SecurityGroup
     Properties:
       GroupDescription: Security Group for Customer HTTP Server in MarketPlace VPC. By default allows all outbound traffic.
-      GroupName: !Join ["_", [!Ref EnvType, marketplace_customerhttpserver_sg]]
+      GroupName: !Join ["_", [!Ref Env, marketplace_customerhttpserver_sg]]
       SecurityGroupIngress:
         - IpProtocol: TCP
           FromPort: 22
@@ -64,7 +64,7 @@ Resources:
     Type: AWS::EC2::SecurityGroup
     Properties:
       GroupDescription: Security Group for Worker Portal in MarketPlace VPC. By default allows all outbound traffic.
-      GroupName: !Join ["_", [!Ref EnvType, marketplace_workerportal_sg]]
+      GroupName: !Join ["_", [!Ref Env, marketplace_workerportal_sg]]
       SecurityGroupIngress:
         - IpProtocol: TCP
           FromPort: 22
@@ -82,7 +82,7 @@ Resources:
     Type: AWS::EC2::SecurityGroup
     Properties:
       GroupDescription: Security Group for Customer Portal in MarketPlace VPC. By default allows all outbound traffic.
-      GroupName: !Join ["_", [!Ref EnvType, marketplace_customerportal_sg]]
+      GroupName: !Join ["_", [!Ref Env, marketplace_customerportal_sg]]
       SecurityGroupIngress:
         - IpProtocol: TCP
           FromPort: 22
@@ -100,7 +100,7 @@ Resources:
     Type: AWS::EC2::SecurityGroup
     Properties:
       GroupDescription: Security Group for Batch in MarketPlace VPC. By default allows all outbound traffic.
-      GroupName: !Join ["_", [!Ref EnvType, marketplace_batch_sg]]
+      GroupName: !Join ["_", [!Ref Env, marketplace_batch_sg]]
       SecurityGroupIngress:
         - IpProtocol: TCP
           FromPort: 22
@@ -118,7 +118,7 @@ Resources:
     Type: AWS::EC2::SecurityGroup
     Properties:
       GroupDescription: Security Group for SFTP in MarketPlace VPC. By default allows all outbound traffic.
-      GroupName: !Join ["_", [!Ref EnvType, marketplace_sftp_sg]]
+      GroupName: !Join ["_", [!Ref Env, marketplace_sftp_sg]]
       SecurityGroupIngress:
         - IpProtocol: TCP
           FromPort: 22
@@ -136,7 +136,7 @@ Resources:
     Type: AWS::EC2::SecurityGroup
     Properties:
       GroupDescription: Security Group for EnterpriseDB in MarketPlace VPC. By default allows all outbound traffic.
-      GroupName: !Join ["_", [!Ref EnvType, marketplace_enterprisedb_sg]]
+      GroupName: !Join ["_", [!Ref Env, marketplace_enterprisedb_sg]]
       SecurityGroupIngress:
         - IpProtocol: TCP
           FromPort: 22

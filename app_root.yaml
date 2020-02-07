@@ -12,8 +12,8 @@ Parameters:
     Description: Select a Environment
     Type: String
     AllowedValues:
-      - Prod
-      - Pre-Prod
+      - prod
+      - pre-prod
       - TRN
       - MM
       - UAT
@@ -25,10 +25,10 @@ Parameters:
 ############################## CONDITIONS #####################################
 
 Conditions:
-  ProdVPC:
-    !Equals [!Ref Env, Prod]
-  NonProdVPC:
-    !Or [!Equals [!Ref Env, Pre-Prod], !Equals [!Ref Env, UAT], !Equals [!Ref Env, TRN], !Equals [!Ref Env, MM]]
+  prodVPC:
+    !Equals [!Ref Env, prod]
+  NonprodVPC:
+    !Or [!Equals [!Ref Env, pre-prod], !Equals [!Ref Env, UAT], !Equals [!Ref Env, TRN], !Equals [!Ref Env, MM]]
   BuildVPC:
     !Or [!Equals [!Ref Env, DEV1], !Equals [!Ref Env, DEV2], !Equals [!Ref Env, SIT1], !Equals [!Ref Env, SIT2]]
 
@@ -42,29 +42,27 @@ Resources:
 
   AppSGStack:
     Type: AWS::CloudFormation::Stack
-    Condition: ProdAppSG
-    DependsOn: VPCStack
     Properties:
       TemplateURL: !Join ["",[!Ref S3Location,"SG_Templates/App_SG_Template.yaml"]]
       TimeoutInMinutes: '5'
       Parameters: 
-        VPCStackName: !If [ProdVPC, ProdVPCStack, !If [NonProdVPC, NonProdVPCStack, BuildVPCStack]]
-        EnvType: !Ref Env
+        VPCStackName: !If [prodVPC, prodVPCStack, !If [NonprodVPC, NonprodVPCStack, BuildVPCStack]]
+        Env: !Ref Env
 
 
 ###############################EC2 stacks#####################################
 
-#  ProdWPEC2Stack:
+#  prodWPEC2Stack:
 #    Type: AWS::CloudFormation::Stack
 #    Properties:
 #      TemplateURL: https://cftbuckettesting92839.s3.amazonaws.com/EC2_Templates/Master_EC2_Template.yaml
 #      TimeoutInMinutes: '5'
 #      Parameters:
-#        VPCStackName: 'ProdVPCStack'
+#        VPCStackName: 'prodVPCStack'
 #        EnvType: !Ref Env 
 #         InstanceCount: '2'
-#         InstanceNamePrefix: 'gaiesprodwp'
-#         SubnetNamePrefix: 'App'
+#         InstanceNameprefix: 'gaiesprodwp'
+#         SubnetNameprefix: 'App'
 #         AMI: 'ami-9be6f38c' # need to parameterize
 #         InstanceSecurityGroup: !GetAtt 
 #           - AppSGStack

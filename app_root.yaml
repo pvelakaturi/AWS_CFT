@@ -1,0 +1,74 @@
+AWSTemplateFormatVersion: 2010-09-09
+
+################################PARAMETERS######################################
+
+Parameters:
+  S3Location:
+    Description: Your S3 location to store cloudformation template
+    Type: String
+    Default: "https://gaies-mgmt-s3-bucket.s3.amazonaws.com/"
+    MinLength: 1
+  Env:
+    Description: Select a Environment
+    Type: String
+    AllowedValues:
+      - Prod
+      - Pre-Prod
+      - TRN
+      - MM
+      - UAT
+      - DEV1
+      - DEV2
+      - SIT1
+      - SIT2
+
+############################## CONDITIONS #####################################
+
+Conditions:
+  ProdVPC:
+    !Equals [!Ref Env, Prod]
+  NonProdVPC:
+    !Or [!Equals [!Ref Env, Pre-Prod], !Equals [!Ref Env, UAT], !Equals [!Ref Env, TRN], !Equals [!Ref Env, MM]]
+  BuildVPC:
+    !Or [!Equals [!Ref Env, DEV1], !Equals [!Ref Env, DEV2], !Equals [!Ref Env, SIT1], !Equals [!Ref Env, SIT2]]
+
+######################################RESOURCES################################
+
+Resources:
+
+###############################SECURITY GROUPS#####################################
+
+  ###############################SECURITY GROUPS#####################################
+
+  AppSGStack:
+    Type: AWS::CloudFormation::Stack
+    Condition: ProdAppSG
+    DependsOn: VPCStack
+    Properties:
+      TemplateURL: !Join ["",[!Ref S3Location,"SG_Templates/App_SG_Template.yaml"]]
+      TimeoutInMinutes: '5'
+      Parameters: 
+        VPCStackName: !If [ProdVPC, ProdVPCStack, !If [NonProdVPC, NonProdVPCStack, BuildVPCStack]]
+        EnvType: !Ref Env
+
+
+###############################EC2 stacks#####################################
+
+#  ProdWPEC2Stack:
+#    Type: AWS::CloudFormation::Stack
+#    Properties:
+#      TemplateURL: https://cftbuckettesting92839.s3.amazonaws.com/EC2_Templates/Master_EC2_Template.yaml
+#      TimeoutInMinutes: '5'
+#      Parameters:
+#        VPCStackName: 'ProdVPCStack'
+#        EnvType: !Ref Env 
+#         InstanceCount: '2'
+#         InstanceNamePrefix: 'gaiesprodwp'
+#         SubnetNamePrefix: 'App'
+#         AMI: 'ami-9be6f38c' # need to parameterize
+#         InstanceSecurityGroup: !GetAtt 
+#           - AppSGStack
+#           - Outputs.WP
+#         InstanceType: 't3.medium' # need to parameterize
+  
+  

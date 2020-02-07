@@ -45,6 +45,12 @@ Metadata:
 ################################PARAMETERS######################################
 
 Parameters:
+Parameters:
+  S3Location:
+    Description: Your S3 location to store cloudformation template
+    Type: String
+    Default: "https://gaies-mgmt-s3-bucket.s3.amazonaws.com/"
+    MinLength: 1
   Env:
     Description: Select a Environment
     Type: String
@@ -141,7 +147,7 @@ Resources:
     Type: AWS::CloudFormation::Stack
     Condition: ProdVPC
     Properties:
-      TemplateURL: https://gaies-mgmt-s3-bucket.s3.amazonaws.com/VPC_Templates/App_Network_Template.yaml
+      TemplateURL: !Join ["",[!Ref S3Location,"VPC_Templates/App_Network_Template.yaml"]]
       TimeoutInMinutes: '5'
       Parameters:
         VPCName: ProdVPC
@@ -153,11 +159,11 @@ Resources:
         DatabaseASubnetCIDR: !Ref DatabaseASubnetCIDR
         DatabaseBSubnetCIDR: !Ref DatabaseBSubnetCIDR
 
-  NonProdVPCStack:
+  VPCStack:
     Type: AWS::CloudFormation::Stack
     Condition: NonProdVPC
     Properties:
-      TemplateURL: https://gaies-mgmt-s3-bucket.s3.amazonaws.com/VPC_Templates/App_Network_Template.yaml
+      TemplateURL: !Join ["",[!Ref S3Location,"VPC_Templates/App_Network_Template.yaml"]]
       TimeoutInMinutes: '5'
       Parameters:
         VPCName: NonProdVPC
@@ -173,7 +179,7 @@ Resources:
     Type: AWS::CloudFormation::Stack
     Condition: BuildVPC
     Properties:
-      TemplateURL: https://gaies-mgmt-s3-bucket.s3.amazonaws.com/VPC_Templates/App_Network_Template.yaml
+      TemplateURL: !Join ["",[!Ref S3Location,"VPC_Templates/App_Network_Template.yaml"]]
       TimeoutInMinutes: '5'
       Parameters:
         VPCName: BuildVPC
@@ -188,27 +194,31 @@ Resources:
     Condition: ProdAppSG
     DependsOn: VPCStack
     Properties:
-      TemplateURL: https://gaies-mgmt-s3-bucket.s3.amazonaws.com/SG_Templates/App_SG_Template.yaml
+      TemplateURL: !Join ["",[!Ref S3Location,"SG_Templates/App_SG_Template.yaml"]]
       TimeoutInMinutes: '5'
       Parameters: 
-        VPCStackName: !GetAtt VPCStack.${AWS::StackName}
+        VPCStackName: !GetAtt 
+          - VPCStack
+          - Outputs.StackName
         EnvType: prod
   UATAppSGStack:
     Type: AWS::CloudFormation::Stack
-    Condition: UATAppSG
-    DependsOn: NonProdVPCStack
+    Condition: ProdAppSG
+    DependsOn: VPCStack
     Properties:
-      TemplateURL: https://gaies-mgmt-s3-bucket.s3.amazonaws.com/SG_Templates/App_SG_Template.yaml
+      TemplateURL: !Join ["",[!Ref S3Location,"SG_Templates/App_SG_Template.yaml"]]
       TimeoutInMinutes: '5'
       Parameters: 
-        VPCStackName: NonProdVPCStack
+        VPCStackName: !GetAtt 
+          - VPCStack
+          - !Sub ${AWS::StackName}
         EnvType: uat
   DEV1AppSGStack:
     Type: AWS::CloudFormation::Stack
     Condition: DEV1AppSG
     DependsOn: BuildVPCStack
     Properties:
-      TemplateURL: https://gaies-mgmt-s3-bucket.s3.amazonaws.com/SG_Templates/App_SG_Template.yaml
+      TemplateURL: !Join ["",[!Ref S3Location,"SG_Templates/App_SG_Template.yaml"]]
       TimeoutInMinutes: '5'
       Parameters: 
         VPCStackName: BuildVPCStack
@@ -219,7 +229,7 @@ Resources:
 
   ProdWPEC2Stack:
     Type: AWS::CloudFormation::Stack
-    Dependson: AppSGStack
+    DependsOn: AppSGStack
     Properties:
       TemplateURL: https://gaies-mgmt-s3-bucket.s3.amazonaws.com/EC2_Templates/Master_EC2_Template.yaml
       TimeoutInMinutes: '5'
@@ -236,7 +246,7 @@ Resources:
   
   ProdCPEC2Stack:
     Type: AWS::CloudFormation::Stack
-    Dependson: AppSGStack
+    DependsOn: AppSGStack
     Properties:
       TemplateURL: https://gaies-mgmt-s3-bucket.s3.amazonaws.com/EC2_Templates/Master_EC2_Template.yaml
       TimeoutInMinutes: '5'
@@ -253,7 +263,7 @@ Resources:
   
   ProdIHSEC2Stack:
     Type: AWS::CloudFormation::Stack
-    Dependson: AppSGStack
+    DependsOn: AppSGStack
     Properties:
       TemplateURL: https://gaies-mgmt-s3-bucket.s3.amazonaws.com/EC2_Templates/Master_EC2_Template.yaml
       TimeoutInMinutes: '5'
@@ -270,7 +280,7 @@ Resources:
   
   ProdOracleEC2Stack:
     Type: AWS::CloudFormation::Stack
-    Dependson: AppSGStack
+    DependsOn: AppSGStack
     Properties:
       TemplateURL: https://gaies-mgmt-s3-bucket.s3.amazonaws.com/EC2_Templates/Master_EC2_Template.yaml
       TimeoutInMinutes: '5'

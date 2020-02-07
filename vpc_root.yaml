@@ -1,0 +1,183 @@
+AWSTemplateFormatVersion: 2010-09-09
+
+################################METADATA########################################
+
+Metadata:
+  AWS::CloudFormation::Interface:
+    ParameterGroups:
+      -
+        Label:
+          default: "app VPC"
+        Parameters:
+          - env
+          - CidrBlock
+          - DMZASubnetCIDR
+          - DMZBSubnetCIDR
+          - AppASubnetCIDR
+          - AppBSubnetCIDR
+          - DatabaseASubnetCIDR
+          - DatabaseBSubnetCIDR
+
+    ParameterLabels:
+      Env:
+        default: The env to which this template should get deployed to
+      CidrBlock:
+        default: The IP address range that can be used to SSH to the EC2 instances
+      DMZASubnetCIDR:
+        default: CIDR IP for DMZ A Subnet. [Input only if creating Prod, Non-Prod, GA Marketplace Prod, OR GA Marketplace Non-Prod VPC]
+      DMZBSubnetCIDR:
+        default: CIDR IP for DMZ B Subnet. [Input only if creating Prod, Non-Prod, GA Marketplace Prod, OR GA Marketplace Non-Prod VPC]
+      AppASubnetCIDR:
+        default: CIDR IP for App A Subnet. [Input only if creating Prod, Non-Prod, Build, or GA Marketplace Build VPC]
+      AppBSubnetCIDR:
+        default: CIDR IP for App B Subnet. [Input only if creating Prod or Non-Prod VPC]
+      DatabaseASubnetCIDR:
+        default: CIDR IP for Database A Subnet. [Input only if creating Prod, Non-Prod, Build, or GA Marketplace Build VPC ]
+      DatabaseBSubnetCIDR:
+        default: CIDR IP for Database B Subnet. [Input only if creating Prod or Non-Prod VPC]
+
+
+################################PARAMETERS######################################
+
+Parameters:
+Parameters:
+  S3Location:
+    Description: Your S3 location to store cloudformation template
+    Type: String
+    Default: "https://gaies-mgmt-s3-bucket.s3.amazonaws.com/"
+    MinLength: 1
+  Env:
+    Description: Select a Environment
+    Type: String
+    AllowedValues:
+      - Prod
+      - Pre-Prod
+      - TRN
+      - MM
+      - UAT
+      - DEV1
+      - DEV2
+      - SIT1
+      - SIT2
+  CidrBlock:
+    Type: String
+    MinLength: '9'
+    MaxLength: '18'
+    AllowedPattern: '(\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})/(\d{1,2})'
+    #Description: The IP address range that can be used to SSH to the EC2 instances
+    ConstraintDescription: Must be a valid IP CIDR range form x.x.x.x/x
+
+  DMZASubnetCIDR:
+    Type: String
+    MinLength: '9'
+    MaxLength: '18'
+    AllowedPattern: '(\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})/(\d{1,2})'
+    #Description: CIDR IP for DMZ A Subnet
+    ConstraintDescription: Must be a valid IP CIDR range form x.x.x.x/x
+
+  DMZBSubnetCIDR:
+    Type: String
+    MinLength: '9'
+    MaxLength: '18'
+    AllowedPattern: '(\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})/(\d{1,2})'
+    #Description: CIDR IP for DMZ B Subnet
+    ConstraintDescription: Must be a valid IP CIDR range form x.x.x.x/x
+
+  AppASubnetCIDR:
+    Type: String
+    MinLength: '9'
+    MaxLength: '18'
+    AllowedPattern: '(\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})/(\d{1,2})'
+    #Description: CIDR IP for App A Subnet
+    ConstraintDescription: Must be a valid IP CIDR range form x.x.x.x/x
+
+  AppBSubnetCIDR:
+    Type: String
+    MinLength: '9'
+    MaxLength: '18'
+    AllowedPattern: '(\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})/(\d{1,2})'
+    #Description: CIDR IP for App B Subnet
+    ConstraintDescription: Must be a valid IP CIDR range form x.x.x.x/x
+
+  DatabaseASubnetCIDR:
+    Type: String
+    MinLength: '9'
+    MaxLength: '18'
+    AllowedPattern: '(\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})/(\d{1,2})'
+    #Description: CIDR IP for Database A Subnet
+    ConstraintDescription: Must be a valid IP CIDR range form x.x.x.x/x
+
+  DatabaseBSubnetCIDR:
+    Type: String
+    MinLength: '9'
+    MaxLength: '18'
+    AllowedPattern: '(\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})/(\d{1,2})'
+    #Description: CIDR IP for Database B Subnet
+    ConstraintDescription: Must be a valid IP CIDR range form x.x.x.x/x
+
+    ############################## CONDITIONS #####################################
+
+Conditions:
+  ProdVPC:
+    !Equals [!Ref Env, Prod]
+  NonProdVPC:
+    !Or [!Equals [!Ref Env, Pre-Prod], !Equals [!Ref Env, UAT], !Equals [!Ref Env, TRN], !Equals [!Ref Env, MM]]
+  BuildVPC:
+    !Or [!Equals [!Ref Env, DEV1], !Equals [!Ref Env, DEV2], !Equals [!Ref Env, SIT1], !Equals [!Ref Env, SIT2]]
+
+  ProdAppSG:
+    !Equals [!Ref Env, Prod]
+  UATAppSG:
+    !Equals [!Ref Env, UAT]
+  DEV1AppSG:
+    !Equals [!Ref Env, DEV1]
+
+######################################RESOURCES################################
+
+Resources:
+
+#########################################VPC####################################
+
+  VPCStack:
+    Type: AWS::CloudFormation::Stack
+    Condition: ProdVPC
+    Properties:
+      TemplateURL: !Join ["",[!Ref S3Location,"VPC_Templates/App_Network_Template.yaml"]]
+      TimeoutInMinutes: '5'
+      Parameters:
+        VPCName: ProdVPC
+        CidrBlock: !Ref CidrBlock
+        DMZASubnetCIDR: !Ref DMZASubnetCIDR
+        DMZBSubnetCIDR: !Ref DMZBSubnetCIDR
+        AppASubnetCIDR: !Ref AppASubnetCIDR
+        AppBSubnetCIDR: !Ref AppBSubnetCIDR
+        DatabaseASubnetCIDR: !Ref DatabaseASubnetCIDR
+        DatabaseBSubnetCIDR: !Ref DatabaseBSubnetCIDR
+
+  VPCStack:
+    Type: AWS::CloudFormation::Stack
+    Condition: NonProdVPC
+    Properties:
+      TemplateURL: !Join ["",[!Ref S3Location,"VPC_Templates/App_Network_Template.yaml"]]
+      TimeoutInMinutes: '5'
+      Parameters:
+        VPCName: NonProdVPC
+        CidrBlock: !Ref CidrBlock
+        DMZASubnetCIDR: !Ref DMZASubnetCIDR
+        DMZBSubnetCIDR: !Ref DMZBSubnetCIDR
+        AppASubnetCIDR: !Ref AppASubnetCIDR
+        AppBSubnetCIDR: !Ref AppBSubnetCIDR
+        DatabaseASubnetCIDR: !Ref DatabaseASubnetCIDR
+        DatabaseBSubnetCIDR: !Ref DatabaseBSubnetCIDR
+
+  BuildVPCStack:
+    Type: AWS::CloudFormation::Stack
+    Condition: BuildVPC
+    Properties:
+      TemplateURL: !Join ["",[!Ref S3Location,"VPC_Templates/App_Network_Template.yaml"]]
+      TimeoutInMinutes: '5'
+      Parameters:
+        VPCName: BuildVPC
+        CidrBlock: !Ref CidrBlock
+        AppASubnetCIDR: !Ref AppASubnetCIDR
+        DatabaseASubnetCIDR: !Ref DatabaseASubnetCIDR

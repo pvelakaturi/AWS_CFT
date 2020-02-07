@@ -256,40 +256,40 @@ Outputs:
     Description: Management VPC
     Value: !Ref VPC
     Export:
-      Name: !Sub ${AWS::StackName}-VPC
+      Name: VPC
 
   DMZASubnet:
     Description: DMZ Subnet in AZ a
     Value: !Ref DMZASubnet
     Export:
-      Name: !Sub ${AWS::StackName}-DMZASubnet
+      Name: DMZASubnet
 
   DMZBSubnet:
     Description: DMZ Subnet in AZ b
     Value: !Ref DMZBSubnet
     Export:
-      Name: !Sub ${AWS::StackName}-DMZBSubnet
+      Name: DMZBSubnet
 
   AppASubnet:
     Description: App Subnet in AZ a
     Value: !Ref AppASubnet
     Export:
-      Name: !Sub ${AWS::StackName}-AppASubnet
+      Name: AppASubnet
 
   AppBSubnet:
     Description: App Subnet in AZ b
     Value: !Ref AppBSubnet
     Export:
-      Name: !Sub ${AWS::StackName}-AppBSubnet
+      Name: AppBSubnet
 
   DatabaseASubnet:
     Description: Database Subnet in AZ a
     Value: !Ref DatabaseASubnet
     Export:
-      Name: !Sub ${AWS::StackName}-DatabaseASubnet
+      Name: DatabaseASubnet
 
   DatabaseBSubnet:
     Description: Database Subnet in AZ b
     Value: !Ref DatabaseBSubnet
     Export:
-      Name: !Sub ${AWS::StackName}-DatabaseBSubnet
+      Name: DatabaseBSubnet

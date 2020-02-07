@@ -151,38 +151,43 @@ Resources:
 ########################### OUTPUTS ##################################
 
 Outputs:
+  StackName: 
+    Description: get the nested stack names to be referenced in other templates. 
+    Value: !Sub ${AWS::StackName}
+    Export:
+     Name: StackName
   CustomerHTTPServerSG:
     Description: Security Group Id for Customer HTTP Server in MarketPlace VPC
     Value: !Ref CustomerHTTPServerSG
     Export:
-      Name: !Sub ${AWS::StackName}-CustomerHTTPServer
+      Name: CP_HTTP
 
   WorkerPortalSG:
     Description: Security Group Id for Worker Portal in MarketPlace VPC
     Value: !Ref WorkerPortalSG
     Export:
-      Name: !Sub ${AWS::StackName}-WorkerPortal
+      Name: WP
 
   CustomerPortalSG:
     Description: Security Group Id for Customer Portal in MarketPlace VPC
     Value: !Ref CustomerPortalSG
     Export:
-      Name: !Sub ${AWS::StackName}-CustomerPortal
+      Name: CP
 
   BatchSG:
     Description: Security Group Id for Batch in MarketPlace VPC
     Value: !Ref BatchSG
     Export:
-      Name: !Sub ${AWS::StackName}-Batch
+      Name: Batch
 
   SFTPSG:
     Description: Security Group Id for SFTP in MarketPlace VPC
     Value: !Ref SFTPSG
     Export:
-      Name: !Sub ${AWS::StackName}-SFTP
+      Name: SFTP
 
   EnterpriseDBSG:
     Description: Security Group Id for EnterpriseDB in MarketPlace VPC
     Value: !Ref EnterpriseDBSG
     Export:
-      Name: !Sub ${AWS::StackName}-EnterpriseDB
+      Name: EnterpriseDB

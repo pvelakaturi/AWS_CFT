@@ -14,7 +14,7 @@
        template: "/home/gitlab-runner/builds/G1RPJgRJ/0/root/georgiaies_main/SG_Templates/App_SG_Template.yaml"
        template_parameters:
           VPCStackName: "ManagementVPCStack"
-          EnvType: "dev"
+          Env: "dev"
        tags:
            Stack: "SG-ansible-cloudformation"
   - name: assume the build role in another account
@@ -32,7 +32,7 @@
       state: "present"
       region: "us-east-1"
       disable_rollback: true
-      template:  "/home/gitlab-runner/builds/G1RPJgRJ/0/root/georgiaies_main/vpc_root.yaml"
+      template:  "/home/gitlab-runner/builds/G1RPJgRJ/0/root/georgiaies_main/VPC_Templates/App_Network_Template.yaml"
       template_parameters:
           VPCName: "ProdVPC"
           CidrBlock: "10.10.0.0/16"
@@ -44,7 +44,7 @@
           DatabaseBSubnetCIDR: "10.10.60.0/24"
 
       tags:
-           Stack: "prod-application-cloudformation-cicd"
+          Stack: "prod-application-cloudformation-cicd"
   - name: Run app template build account and demo cross account deployments through STS assume roles
     cloudformation:
       aws_access_key: "{{ assumed_role.sts_creds.access_key }}"
@@ -58,4 +58,4 @@
       template_parameters:
           Env: "prod"
       tags:
-           Stack: "prod-application-cloudformation-cicd"
+          Stack: "prod-application-cloudformation-cicd"

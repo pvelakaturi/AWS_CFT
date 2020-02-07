@@ -46,27 +46,27 @@ Resources:
       TemplateURL: !Join ["",[!Ref S3Location,"SG_Templates/App_SG_Template.yaml"]]
       TimeoutInMinutes: '5'
       Parameters: 
-        VPCStackName: !If [prodVPC, prodVPCStack, !If [NonprodVPC, NonprodVPCStack, BuildVPCStack]]
+        VPCStackName: !If [prodVPC, ProdVPCStack, !If [NonprodVPC, NonprodVPCStack, BuildVPCStack]]
         Env: !Ref Env
 
 
 ###############################EC2 stacks#####################################
 
-#  prodWPEC2Stack:
-#    Type: AWS::CloudFormation::Stack
-#    Properties:
-#      TemplateURL: https://cftbuckettesting92839.s3.amazonaws.com/EC2_Templates/Master_EC2_Template.yaml
-#      TimeoutInMinutes: '5'
-#      Parameters:
-#        VPCStackName: 'prodVPCStack'
-#        EnvType: !Ref Env 
-#         InstanceCount: '2'
-#         InstanceNameprefix: 'gaiesprodwp'
-#         SubnetNameprefix: 'App'
-#         AMI: 'ami-9be6f38c' # need to parameterize
-#         InstanceSecurityGroup: !GetAtt 
-#           - AppSGStack
-#           - Outputs.WP
-#         InstanceType: 't3.medium' # need to parameterize
+ prodWPEC2Stack:
+   Type: AWS::CloudFormation::Stack
+   Properties:
+     TemplateURL: !Join ["",[!Ref S3Location,""]]
+     TimeoutInMinutes: '5'
+     Parameters:
+       VPCStackName: 'ProdVPCStack'
+       EnvType: !Ref Env 
+        InstanceCount: '2'
+        InstanceNameprefix: 'gaiesprodwp'
+        SubnetNameprefix: 'App'
+        AMI: 'ami-9be6f38c' # need to parameterize
+        InstanceSecurityGroup: !GetAtt 
+          - AppSGStack
+          - Outputs.WP
+        InstanceType: 't3.medium' # need to parameterize
   
   

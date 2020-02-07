@@ -137,7 +137,7 @@ Resources:
 
 #########################################VPC####################################
 
-  ProdVPCStack:
+  VPCStack:
     Type: AWS::CloudFormation::Stack
     Condition: ProdVPC
     Properties:
@@ -183,15 +183,15 @@ Resources:
 
 ###############################SECURITY GROUPS#####################################
 
-  ProdAppSGStack:
+  AppSGStack:
     Type: AWS::CloudFormation::Stack
     Condition: ProdAppSG
-    DependsOn: ProdVPCStack
+    DependsOn: VPCStack
     Properties:
       TemplateURL: https://gaies-mgmt-s3-bucket.s3.amazonaws.com/SG_Templates/App_SG_Template.yaml
       TimeoutInMinutes: '5'
       Parameters: 
-        VPCStackName: ProdVPCStack
+        VPCStackName: !GetAtt VPCStack.${AWS::StackName}
         EnvType: prod
   UATAppSGStack:
     Type: AWS::CloudFormation::Stack
@@ -219,12 +219,12 @@ Resources:
 
   ProdWPEC2Stack:
     Type: AWS::CloudFormation::Stack
-    Dependson: ProdAppSGStack
+    Dependson: AppSGStack
     Properties:
       TemplateURL: https://gaies-mgmt-s3-bucket.s3.amazonaws.com/EC2_Templates/Master_EC2_Template.yaml
       TimeoutInMinutes: '5'
       Parameters:
-        VPCStackName: 'ProdVPCStack'
+        VPCStackName: !GetAtt VPCStack.${AWS::StackName}
         EnvType: !Ref Env 
         InstanceCount: '2'
         InstanceNamePrefix: 'gaiesprodwp'
@@ -236,12 +236,12 @@ Resources:
   
   ProdCPEC2Stack:
     Type: AWS::CloudFormation::Stack
-    Dependson: ProdAppSGStack
+    Dependson: AppSGStack
     Properties:
       TemplateURL: https://gaies-mgmt-s3-bucket.s3.amazonaws.com/EC2_Templates/Master_EC2_Template.yaml
       TimeoutInMinutes: '5'
       Parameters:
-        VPCStackName: 'ProdVPCStack'
+        VPCStackName: !GetAtt VPCStack.${AWS::StackName}
         EnvType: !Ref Env 
         InstanceCount: '6' # need to parameterize
         InstanceNamePrefix: 'gaiesprodcp'
@@ -253,12 +253,12 @@ Resources:
   
   ProdIHSEC2Stack:
     Type: AWS::CloudFormation::Stack
-    Dependson: ProdAppSGStack
+    Dependson: AppSGStack
     Properties:
       TemplateURL: https://gaies-mgmt-s3-bucket.s3.amazonaws.com/EC2_Templates/Master_EC2_Template.yaml
       TimeoutInMinutes: '5'
       Parameters:
-        VPCStackName: 'ProdVPCStack'
+        VPCStackName: !GetAtt VPCStack.${AWS::StackName}
         EnvType: !Ref Env 
         InstanceCount: '1' # need to parameterize
         InstanceNamePrefix: 'gaiesprodihs'
@@ -270,12 +270,12 @@ Resources:
   
   ProdOracleEC2Stack:
     Type: AWS::CloudFormation::Stack
-    Dependson: ProdAppSGStack
+    Dependson: AppSGStack
     Properties:
       TemplateURL: https://gaies-mgmt-s3-bucket.s3.amazonaws.com/EC2_Templates/Master_EC2_Template.yaml
       TimeoutInMinutes: '5'
       Parameters:
-        VPCStackName: 'ProdVPCStack'
+        VPCStackName: !GetAtt VPCStack.${AWS::StackName}
         EnvType: !Ref Env 
         InstanceCount: '1' # need to parameterize
         InstanceNamePrefix: 'gaiesprodoracle'

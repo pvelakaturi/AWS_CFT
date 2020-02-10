@@ -61,7 +61,7 @@ Resources:
        VPCStackName: 'ProdVPCStack'
        EnvType: !Ref Env 
         InstanceCount: '2'
-        InstanceNameprefix: 'gaiesprodwp'
+        InstanceType: 'WP'
         SubnetNameprefix: 'App'
         AMI: 'ami-9be6f38c' # need to parameterize
         InstanceSecurityGroup: !GetAtt 

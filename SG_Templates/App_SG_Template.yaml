@@ -155,7 +155,7 @@ Outputs:
     Description: get the nested stack names to be referenced in other templates. 
     Value: !Sub ${AWS::StackName}
     Export:
-     Name: StackName
+      Name: StackName
   CustomerHTTPServerSG:
     Description: Security Group Id for Customer HTTP Server in MarketPlace VPC
     Value: !Ref CustomerHTTPServerSG

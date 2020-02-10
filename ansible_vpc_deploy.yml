@@ -7,16 +7,16 @@
   tasks:
   - name: Run SG CFT to demo local account run
     cloudformation:
-       stack_name: "AppSGStack"
-       state: "present"
-       region: "us-east-1"
-       disable_rollback: true
-       template: "/home/gitlab-runner/builds/G1RPJgRJ/0/root/georgiaies_main/SG_Templates/App_SG_Template.yaml"
-       template_parameters:
-          VPCStackName: "ManagementVPCStack"
-          Env: "dev"
-       tags:
-           Stack: "SG-ansible-cloudformation"
+      stack_name: "AppSGStack"
+      state: "present"
+      region: "us-east-1"
+      disable_rollback: true
+      template: "/home/gitlab-runner/builds/G1RPJgRJ/0/root/georgiaies_main/SG_Templates/App_SG_Template.yaml"
+      template_parameters:
+        VPCStackName: "ManagementVPCStack"
+        Env: "dev"
+      tags:
+        Stack: "SG-ansible-cloudformation"
   - name: assume the build role in another account
     sts_assume_role:
       role_arn: "arn:aws:iam::069962244880:role/GAIESBuildAccountCFTRole"
@@ -34,17 +34,16 @@
       disable_rollback: true
       template:  "/home/gitlab-runner/builds/G1RPJgRJ/0/root/georgiaies_main/VPC_Templates/App_Network_Template.yaml"
       template_parameters:
-          VPCName: "ProdVPC"
-          CidrBlock: "10.10.0.0/16"
-          DMZASubnetCIDR: "10.10.10.0/24"
-          DMZBSubnetCIDR: "10.10.20.0/24"
-          AppASubnetCIDR: "10.10.30.0/24"
-          AppBSubnetCIDR: "10.10.40.0/24"
-          DatabaseASubnetCIDR: "10.10.50.0/24"
-          DatabaseBSubnetCIDR: "10.10.60.0/24"
-
+        VPCName: "ProdVPC"
+        CidrBlock: "10.10.0.0/16"
+        DMZASubnetCIDR: "10.10.10.0/24"
+        DMZBSubnetCIDR: "10.10.20.0/24"
+        AppASubnetCIDR: "10.10.30.0/24"
+        AppBSubnetCIDR: "10.10.40.0/24"
+        DatabaseASubnetCIDR: "10.10.50.0/24"
+        DatabaseBSubnetCIDR: "10.10.60.0/24"
       tags:
-          Stack: "prod-application-cloudformation-cicd"
+        Stack: "prod-application-cloudformation-cicd"
   - name: Run app template build account and demo cross account deployments through STS assume roles
     cloudformation:
       aws_access_key: "{{ assumed_role.sts_creds.access_key }}"
@@ -56,6 +55,6 @@
       disable_rollback: true
       template:  "/home/gitlab-runner/builds/G1RPJgRJ/0/root/georgiaies_main/app_root.yaml"
       template_parameters:
-          Env: "prod"
+        Env: "prod"
       tags:
-          Stack: "prod-application-cloudformation-cicd"
+        Stack: "prod-application-cloudformation-cicd"

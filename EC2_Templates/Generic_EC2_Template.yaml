@@ -51,7 +51,7 @@ Parameters:
       - r5.8xlarge
       - r5.12xlarge
 
-  InstanceTagName:
+  InstanceType:
     Description: Instance Name tag that will be used to define the Name of the instance resource(s)
     Type: String
 
@@ -107,10 +107,10 @@ Resources:
       InstanceType: !Ref InstanceType
       AvailabilityZone: !Select [0, !GetAZs '']
       Tags:
-        - Key: Name
-          Value: !Ref InstanceTagName
+        - Key: InstanceType
+          Value: !Ref InstanceType
         - Key: Host Name
-          Value: !Join ["", [GAIES, !Ref EnvType, !Ref InstanceTagName, 01]]
+          Value: !Join ["", [gaie, !Ref EnvType, !Ref InstanceType, 01]]
         - Key: FTI
           Value: !Ref InstanceHasFTI
 
@@ -131,10 +131,10 @@ Resources:
       InstanceType: !Ref InstanceType
       AvailabilityZone: !Select [1, !GetAZs '']
       Tags:
-        - Key: Name
-          Value: !Ref InstanceTagName
+        - Key: InstanceType
+          Value: !Ref InstanceType
         - Key: Host Name
-          Value: !Join ["", [GAIES, !Ref EnvType, !Ref InstanceTagName, 02]]
+          Value: !Join ["", [gaies, !Ref EnvType, !Ref InstanceType, 02]]
         - Key: FTI
           Value: !Ref InstanceHasFTI
 
@@ -155,10 +155,10 @@ Resources:
       InstanceType: !Ref InstanceType
       AvailabilityZone: !Select [0, !GetAZs '']
       Tags:
-        - Key: Name
-          Value: !Ref InstanceTagName
+        - Key: InstanceType
+          Value: !Ref InstanceType
         - Key: Host Name
-          Value: !Join ["", [GAIES, !Ref EnvType, !Ref InstanceTagName, 03]]
+          Value: !Join ["", [gaies, !Ref EnvType, !Ref InstanceType, 03]]
         - Key: FTI
           Value: !Ref InstanceHasFTI
 
@@ -179,10 +179,10 @@ Resources:
       InstanceType: !Ref InstanceType
       AvailabilityZone: !Select [1, !GetAZs '']
       Tags:
-        - Key: Name
-          Value: !Ref InstanceTagName
+        - Key: InstanceType
+          Value: !Ref InstanceType
         - Key: Host Name
-          Value: !Join ["", [GAIES, !Ref EnvType, !Ref InstanceTagName, 04]]
+          Value: !Join ["", [gaies, !Ref EnvType, !Ref InstanceType, 04]]
         - Key: FTI
           Value: !Ref InstanceHasFTI
 
@@ -203,10 +203,10 @@ Resources:
       InstanceType: !Ref InstanceType
       AvailabilityZone: !Select [0, !GetAZs '']
       Tags:
-        - Key: Name
-          Value: !Ref InstanceTagName
+        - Key: InstanceType
+          Value: !Ref InstanceType
         - Key: Host Name
-          Value: !Join ["", [GAIES, !Ref EnvType, !Ref InstanceTagName, 05]]
+          Value: !Join ["", [gaies, !Ref EnvType, !Ref InstanceType, 05]]
         - Key: FTI
           Value: !Ref InstanceHasFTI
 
@@ -227,54 +227,59 @@ Resources:
       InstanceType: !Ref InstanceType
       AvailabilityZone: !Select [1, !GetAZs '']
       Tags:
-        - Key: Name
-          Value: !Ref InstanceTagName
+        - Key: InstanceType
+          Value: !Ref InstanceType
         - Key: Host Name
-          Value: !Join ["", [GAIES, !Ref EnvType, !Ref InstanceTagName, 06]]
+          Value: !Join ["", [gaies, !Ref EnvType, !Ref InstanceType, 06]]
         - Key: FTI
           Value: !Ref InstanceHasFTI
 
 ################################### OUTPUTS ##################################
 
 Outputs:
+  StackName: 
+    Description: get the nested stack names to be referenced in other templates. 
+    Value: !Sub ${AWS::StackName}
+    Export:
+      Name: StackName
   Instance1:
     Condition: Launch1
     Description: Instance1
     Value: !Ref Instance1
     Export:
-      Name: !Join ["", [GAIES, !Ref EnvType, !Ref InstanceTagName, 01]]
+      Name: !Join ["", [gaies, !Ref EnvType, !Ref InstanceType, 01]]
 
   Instance2:
     Condition: Launch2
     Description: Instance 2
     Value: !Ref Instance2
     Export:
-      Name: !Join ["", [GAIES, !Ref EnvType, !Ref InstanceTagName, 02]]
+      Name: !Join ["", [gaies, !Ref EnvType, !Ref InstanceType, 02]]
 
   Instance3:
     Condition: Launch3
     Description: Instance 3
     Value: !Ref Instance3
     Export:
-      Name: !Join ["", [GAIES, !Ref EnvType, !Ref InstanceTagName, 03]]
+      Name: !Join ["", [gaies, !Ref EnvType, !Ref InstanceType, 03]]
 
   Instance4:
     Condition: Launch4
     Description: Instance 4
     Value: !Ref Instance4
     Export:
-      Name: !Join ["", [GAIES, !Ref EnvType, !Ref InstanceTagName, 04]]
+      Name: !Join ["", [gaies, !Ref EnvType, !Ref InstanceType, 04]]
 
   Instance5:
     Condition: Launch5
     Description: Instance 5
     Value: !Ref Instance5
     Export:
-      Name: !Join ["", [GAIES, !Ref EnvType, !Ref InstanceTagName, 05]]
+      Name: !Join ["", [gaies, !Ref EnvType, !Ref InstanceType, 05]]
 
   Instance6:
     Condition: Launch6
     Description: Instance 6
     Value: !Ref Instance6
     Export:
-      Name: !Join ["", [GAIES, !Ref EnvType, !Ref InstanceTagName, 06]]
+      Name: !Join ["", [gaies, !Ref EnvType, !Ref InstanceType, 06]]

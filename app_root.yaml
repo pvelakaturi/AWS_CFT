@@ -52,14 +52,14 @@ Resources:
 
 ###############################EC2 stacks#####################################
 
- prodWPEC2Stack:
-   Type: AWS::CloudFormation::Stack
-   Properties:
-     TemplateURL: !Join ["",[!Ref S3Location,""]]
-     TimeoutInMinutes: '5'
-     Parameters:
-       VPCStackName: 'ProdVPCStack'
-       EnvType: !Ref Env 
+  ProdWPEC2Stack:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: !Join ["",[!Ref S3Location,""]]
+      TimeoutInMinutes: '5'
+      Parameters:
+        VPCStackName: 'ProdVPCStack'
+        EnvType: !Ref Env 
         InstanceCount: '2'
         InstanceType: 'WP'
         SubnetNameprefix: 'App'
@@ -68,5 +68,5 @@ Resources:
           - AppSGStack
           - Outputs.WP
         InstanceType: 't3.medium' # need to parameterize
-  
+    
   

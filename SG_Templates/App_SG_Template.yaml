@@ -160,7 +160,7 @@ Outputs:
     Description: Security Group Id for Customer HTTP Server in MarketPlace VPC
     Value: !Ref CustomerHTTPServerSG
     Export:
-      Name: CP_HTTP
+      Name: CP-HTTP
 
   WorkerPortalSG:
     Description: Security Group Id for Worker Portal in MarketPlace VPC

@@ -27,6 +27,11 @@ Metadata:
 ################################PARAMETERS######################################
 
 Parameters:
+  S3Location: 
+    Description: Your S3 location to store cloudformation template
+    Type: String
+    Default: "https://gaies-mgmt-s3-bucket.s3.amazonaws.com"
+    MinLength: 1
 
   VPCName:
     Type: String
@@ -56,7 +61,68 @@ Parameters:
     #Description: CIDR IP for Subnet B
     ConstraintDescription: Must be a valid IP CIDR range orm x.x.x.x/x
 
+  EC2Stack:
+    Type: String
+    Description: The EC2 stack to install
+    AllowedValues:
+      - BastionHost
+      - Ansible
+      - Trend
+      - Centrify
+      - SecurityTenable
+      - WSUS
+      - AD
+      - RTC
+      - UrbanCode
+      - Remedy
+
+  InstanceCount:
+    Type: String
+    MinValue: 1
+    MaxValue: 6
+    Default: 2
+    Description: Number of instances to create for the server
+  
+  AMI: 
+    Type: String
+    Description: AMI for the instance
+
+  InstanceType:
+    Type: String
+    AllowedValues:
+      - t3.medium
+      - m5.large
+      - m5.xlarge
+      - m5.2xlarge
+      - m5.4xlarge
+      - m5.8xlarge
+      - c5.large
+      - c5.xlarge
+      - c5.2xlarge
+      - c5.4xlarge
+      - c5.8xlarge
+      - r5.large
+      - r5.xlarge
+      - r5.2xlarge
+      - r5.4xlarge
+      - r5.8xlarge
+      - r5.12xlarge
+
+
 ############################## CONDITIONS #####################################
+
+Conditions:
+  cBastionHost: !Equals [EC2Stack, BastionHost]
+  cAnsible: !Equals [EC2Stack, Ansible]
+  cTrend: !Equals [EC2Stack, Trend]
+  cCentrify: !Equals [EC2Stack, Centrify]
+  cSecurityTenable: !Equals [EC2Stack, SecurityTenable]
+  cWSUS: !Equals [EC2Stack, SecurityTenable]
+  cAD: !Equals [EC2Stack, AD]
+  cRTC: !Equals [EC2Stack, RTC]
+  cUrbanCode: !Equals [EC2Stack, UrbanCode]
+  cRemedy: !Equals [EC2Stack, Remedy]
+
 
 ######################################RESOURCES################################
 
@@ -66,7 +132,6 @@ Resources:
 
   ManagementVPCStack:
     Type: AWS::CloudFormation::Stack
-    Condition: ManagementVPC
     Properties:
       TemplateURL: https://cftbuckettesting92839.s3.amazonaws.com/VPC_Templates/Management_Network_Template.yaml
       TimeoutInMinutes: '5'
@@ -81,7 +146,6 @@ Resources:
 
   ManagementSGStack:
     Type: AWS::CloudFormation::Stack
-    Condition: ManagementSG
     Properties:
       TemplateURL: https://cftbuckettesting92839.s3.amazonaws.com/SG_Templates/Management_SG_Template.yaml
       TimeoutInMinutes: '5'
@@ -90,47 +154,162 @@ Resources:
 
 ###############################EC2 stacks#####################################
 
-  CentrifyEC2Stack:
+  BastionHostEC2Stack:
     Type: AWS::CloudFormation::Stack
+    Condition: cBastionHost
     Properties:
       TemplateURL: https://cftbuckettesting92839.s3.amazonaws.com/EC2_Templates/Master_EC2_Template.yaml
       TimeoutInMinutes: '5'
       Parameters:
         VPCStackName: 'ManagementVPCStack'
         EnvType: 'PRD' 
-        InstanceCount: '2'
+        InstanceCount: !Ref InstanceCount
+        InstanceNamePrefix: 'gaiesmgmtbastionhost'
+        AMI: !Ref AMI
+        InstanceSecurityGroup: !ImportValue
+              'Fn::Sub': 'ManagementSGStack-BastionHost'
+        InstanceType: !Ref InstanceType
+
+  AnsibleEC2Stack:
+    Type: AWS::CloudFormation::Stack
+    Condition: cAnsible
+    Properties:
+      TemplateURL: https://cftbuckettesting92839.s3.amazonaws.com/EC2_Templates/Master_EC2_Template.yaml
+      TimeoutInMinutes: '5'
+      Parameters:
+        VPCStackName: 'ManagementVPCStack'
+        EnvType: 'PRD' 
+        InstanceCount: !Ref InstanceCount
+        InstanceNamePrefix: 'gaiesmgmtansible'
+        AMI: !Ref AMI
+        InstanceSecurityGroup: !ImportValue
+              'Fn::Sub': 'ManagementSGStack-Ansible'
+        InstanceType: !Ref InstanceType 
+
+  TrendEC2Stack:
+    Type: AWS::CloudFormation::Stack
+    Condition: cTrend
+    Properties:
+      TemplateURL: https://cftbuckettesting92839.s3.amazonaws.com/EC2_Templates/Master_EC2_Template.yaml
+      TimeoutInMinutes: '5'
+      Parameters:
+        VPCStackName: 'ManagementVPCStack'
+        EnvType: 'PRD' 
+        InstanceCount: !Ref InstanceCount
+        InstanceNamePrefix: 'gaiesmgmttrend'
+        AMI: !Ref AMI
+        InstanceSecurityGroup: !ImportValue
+              'Fn::Sub': 'ManagementSGStack-Trend'
+        InstanceType: !Ref InstanceType     
+  
+  CentrifyEC2Stack:
+    Type: AWS::CloudFormation::Stack
+    Condition: cCentrify
+    Properties:
+      TemplateURL: https://cftbuckettesting92839.s3.amazonaws.com/EC2_Templates/Master_EC2_Template.yaml
+      TimeoutInMinutes: '5'
+      Parameters:
+        VPCStackName: 'ManagementVPCStack'
+        EnvType: 'PRD' 
+        InstanceCount: !Ref InstanceCount
         InstanceNamePrefix: 'gaiesmgmtcentrify'
-        AMI: 'ami-9be6f38c' # need to parameterize
+        AMI: !Ref AMI
         InstanceSecurityGroup: !ImportValue
               'Fn::Sub': 'ManagementSGStack-Centrify'
-        InstanceType: 't3.medium' # need to parameterize
+        InstanceType: !Ref InstanceType
+
+  SecurityTenableEC2Stack:
+    Type: AWS::CloudFormation::Stack
+    Condition: cSecurityTenable
+    Properties:
+      TemplateURL: https://cftbuckettesting92839.s3.amazonaws.com/EC2_Templates/Master_EC2_Template.yaml
+      TimeoutInMinutes: '5'
+      Parameters:
+        VPCStackName: 'ManagementVPCStack'
+        EnvType: 'PRD' 
+        InstanceCount: !Ref InstanceCount
+        InstanceNamePrefix: 'gaiesmgmtsecuritytenable'
+        AMI: !Ref AMI
+        InstanceSecurityGroup: !ImportValue
+              'Fn::Sub': 'ManagementSGStack-SecurityTenable'
+        InstanceType: !Ref InstanceType
+
+  WSUSEC2Stack:
+    Type: AWS::CloudFormation::Stack
+    Condition: cWSUS
+    Properties:
+      TemplateURL: https://cftbuckettesting92839.s3.amazonaws.com/EC2_Templates/Master_EC2_Template.yaml
+      TimeoutInMinutes: '5'
+      Parameters:
+        VPCStackName: 'ManagementVPCStack'
+        EnvType: 'PRD' 
+        InstanceCount: !Ref InstanceCount
+        InstanceNamePrefix: 'gaiesmgmtwsus'
+        AMI: !Ref AMI
+        InstanceSecurityGroup: !ImportValue
+              'Fn::Sub': 'ManagementSGStack-WSUS'
+        InstanceType: !Ref InstanceType
+
+  ADEC2Stack:
+    Type: AWS::CloudFormation::Stack
+    Condition: cAD
+    Properties:
+      TemplateURL: https://cftbuckettesting92839.s3.amazonaws.com/EC2_Templates/Master_EC2_Template.yaml
+      TimeoutInMinutes: '5'
+      Parameters:
+        VPCStackName: 'ManagementVPCStack'
+        EnvType: 'PRD' 
+        InstanceCount: !Ref InstanceCount
+        InstanceNamePrefix: 'gaiesmgmtad'
+        AMI: !Ref AMI
+        InstanceSecurityGroup: !ImportValue
+              'Fn::Sub': 'ManagementSGStack-AD'
+        InstanceType: !Ref InstanceType
+
+  RTCEC2Stack:
+    Type: AWS::CloudFormation::Stack
+    Condition: cRTC
+    Properties:
+      TemplateURL: https://cftbuckettesting92839.s3.amazonaws.com/EC2_Templates/Master_EC2_Template.yaml
+      TimeoutInMinutes: '5'
+      Parameters:
+        VPCStackName: 'ManagementVPCStack'
+        EnvType: 'PRD' 
+        InstanceCount: !Ref InstanceCount
+        InstanceNamePrefix: 'gaiesmgmtrtc'
+        AMI: !Ref AMI
+        InstanceSecurityGroup: !ImportValue
+              'Fn::Sub': 'ManagementSGStack-RTC'
+        InstanceType: !Ref InstanceType
   
   UrbanCodeEC2Stack:
     Type: AWS::CloudFormation::Stack
+    Condition: cUrbanCode
     Properties:
       TemplateURL: https://cftbuckettesting92839.s3.amazonaws.com/EC2_Templates/Master_EC2_Template.yaml
       TimeoutInMinutes: '5'
       Parameters:
         VPCStackName: 'ManagementVPCStack'
         EnvType: 'PRD' 
-        InstanceCount: '1' # need to parameterize
+        InstanceCount: !Ref InstanceCount
         InstanceNamePrefix: 'gaiesmgmtuc'
-        AMI: 'ami-9be6f38c' # need to parameterize
+        AMI: !Ref AMI
         InstanceSecurityGroup: !ImportValue
               'Fn::Sub': 'ManagementSGStack-UrbanCode'
-        InstanceType: 'c5.large' # need to parameterize
+        InstanceType: !Ref InstanceType
   
   RemedyEC2Stack:
     Type: AWS::CloudFormation::Stack
+    Condition: cRemedy
     Properties:
       TemplateURL: https://cftbuckettesting92839.s3.amazonaws.com/EC2_Templates/Master_EC2_Template.yaml
       TimeoutInMinutes: '5'
       Parameters:
         VPCStackName: 'ManagementVPCStack'
         EnvType: 'PRD' 
-        InstanceCount: '1' # need to parameterize
+        InstanceCount: !Ref InstanceCount
         InstanceNamePrefix: 'gaiesmgmtremedy'
-        AMI: 'ami-9be6f38c' # need to parameterize
+        AMI: !Ref AMI
         InstanceSecurityGroup: !ImportValue
               'Fn::Sub': 'ManagementSGStack-Remedy'
-        InstanceType: 'c5.large' # need to parameterize
+        InstanceType: !Ref InstanceType

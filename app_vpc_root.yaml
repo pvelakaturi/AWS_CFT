@@ -45,7 +45,6 @@ Metadata:
 ################################PARAMETERS######################################
 
 Parameters:
-Parameters:
   S3Location:
     Description: Your S3 location to store cloudformation template
     Type: String
@@ -64,6 +63,7 @@ Parameters:
       - DEV2
       - SIT1
       - SIT2
+      
   CidrBlock:
     Type: String
     MinLength: '9'

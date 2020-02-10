@@ -55,7 +55,7 @@ Resources:
   ProdWPEC2Stack:
     Type: AWS::CloudFormation::Stack
     Properties:
-      TemplateURL: !Join ["",[!Ref S3Location,""]]
+      TemplateURL: !Join ["",[!Ref S3Location,"EC2_Template/Generic_EC2_Template.yaml"]]
       TimeoutInMinutes: '5'
       Parameters:
         VPCStackName: 'ProdVPCStack'
@@ -64,9 +64,10 @@ Resources:
         InstanceType: 'WP'
         SubnetNameprefix: 'App'
         AMI: 'ami-9be6f38c' # need to parameterize
-        InstanceSecurityGroup: !GetAtt 
+        InstanceSecurityGroup: Fn::GetAtt: 
           - AppSGStack
-          - Outputs.WP
+          - Outputs
+          - !Join ["-", [!Ref Env,CP-SG]]
         InstanceType: 't3.medium' # need to parameterize
     
   

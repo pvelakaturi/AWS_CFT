@@ -160,34 +160,39 @@ Outputs:
     Description: Security Group Id for Customer HTTP Server in MarketPlace VPC
     Value: !Ref CustomerHTTPServerSG
     Export:
-      Name: CP-HTTP
+      Name: !Join ["-", [!Ref Env,CustomerHTTPServer-SG]]
 
   WorkerPortalSG:
     Description: Security Group Id for Worker Portal in MarketPlace VPC
     Value: !Ref WorkerPortalSG
     Export:
-      Name: WP
+      Name: !Join ["-", [!Ref Env,CP-SG]]
+
 
   CustomerPortalSG:
     Description: Security Group Id for Customer Portal in MarketPlace VPC
     Value: !Ref CustomerPortalSG
     Export:
-      Name: CP
+      Name: !Join ["-", [!Ref Env,WP-SG]]
+
 
   BatchSG:
     Description: Security Group Id for Batch in MarketPlace VPC
     Value: !Ref BatchSG
     Export:
-      Name: Batch
+      Name: !Join ["-", [!Ref Env,Batch-SG]]
+
 
   SFTPSG:
     Description: Security Group Id for SFTP in MarketPlace VPC
     Value: !Ref SFTPSG
     Export:
-      Name: SFTP
+      Name: !Join ["-", [!Ref Env,SFTP-SG]]
+
 
   EnterpriseDBSG:
     Description: Security Group Id for EnterpriseDB in MarketPlace VPC
     Value: !Ref EnterpriseDBSG
     Export:
-      Name: EnterpriseDB
+      Name: !Join ["-", [!Ref Env,EnterpriseDB-SG]]
+

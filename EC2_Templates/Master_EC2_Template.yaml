@@ -44,16 +44,9 @@ Parameters:
       - r5.8xlarge
       - r5.12xlarge
 
-  InstanceTagName:
+  InstanceNamePrefix:
     Description: Instance Name tag that will be used to define the Name of the instance resource(s)
     Type: String
-
-  InstanceHasFTI:
-    Description: Does the Instance have FTI?
-    Type: String
-    AllowedValues:
-      - true
-      - false
 
   InstanceSecurityGroup:
     Description: Security Group for the EC2 instance
@@ -95,17 +88,15 @@ Resources:
           DeviceIndex: '0'
           DeleteOnTermination: 'true'
           SubnetId: !ImportValue
-                  'Fn::Sub': '${VPCStackName}-InternalASubnet'
+                  'Fn::Sub': 'ManagementVPCStack-InternalASubnet'
       ImageId: !Ref AMI
       InstanceType: !Ref InstanceType
       AvailabilityZone: !Select [0, !GetAZs '']
       Tags:
         - Key: Name
-          Value: !Ref InstanceTagName
+          Value: !Ref InstanceNamePrefix
         - Key: Host Name
-          Value: !Join ["", [GAIES, !Ref EnvType, !Ref InstanceTagName, 01]]
-        - Key: FTI
-          Value: !Ref InstanceHasFTI
+          Value: !Join ["", [!Ref EnvType, !Ref InstanceNamePrefix, 01]]
 
   Instance2:
     Condition: Launch2
@@ -119,17 +110,15 @@ Resources:
           DeviceIndex: '0'
           DeleteOnTermination: 'true'
           SubnetId: !ImportValue
-                  'Fn::Sub': '${VPCStackName}-InternalBSubnet'
+                  'Fn::Sub': 'ManagementVPCStack-InternalBSubnet'
       ImageId: !Ref AMI
       InstanceType: !Ref InstanceType
       AvailabilityZone: !Select [1, !GetAZs '']
       Tags:
         - Key: Name
-          Value: !Ref InstanceTagName
+          Value: !Ref InstanceNamePrefix
         - Key: Host Name
-          Value: !Join ["", [GAIES, !Ref EnvType, !Ref InstanceTagName, 02]]
-        - Key: FTI
-          Value: !Ref InstanceHasFTI
+          Value: !Join ["", [!Ref EnvType, !Ref InstanceNamePrefix, 02]]
 
   Instance3:
     Condition: Launch3
@@ -143,17 +132,15 @@ Resources:
           DeviceIndex: '0'
           DeleteOnTermination: 'true'
           SubnetId: !ImportValue
-                  'Fn::Sub': '${VPCStackName}-InternalASubnet'
+                  'Fn::Sub': 'ManagementVPCStack-InternalASubnet'
       ImageId: !Ref AMI
       InstanceType: !Ref InstanceType
       AvailabilityZone: !Select [0, !GetAZs '']
       Tags:
         - Key: Name
-          Value: !Ref InstanceTagName
+          Value: !Ref InstanceNamePrefix
         - Key: Host Name
-          Value: !Join ["", [GAIES, !Ref EnvType, !Ref InstanceTagName, 03]]
-        - Key: FTI
-          Value: !Ref InstanceHasFTI
+          Value: !Join ["", [!Ref EnvType, !Ref InstanceNamePrefix, 03]]
 
   Instance4:
     Condition: Launch4
@@ -167,17 +154,15 @@ Resources:
           DeviceIndex: '0'
           DeleteOnTermination: 'true'
           SubnetId: !ImportValue
-                  'Fn::Sub': '${VPCStackName}-InternalBSubnet'
+                  'Fn::Sub': 'ManagementVPCStack-InternalBSubnet'
       ImageId: !Ref AMI
       InstanceType: !Ref InstanceType
       AvailabilityZone: !Select [1, !GetAZs '']
       Tags:
         - Key: Name
-          Value: !Ref InstanceTagName
+          Value: !Ref InstanceNamePrefix
         - Key: Host Name
-          Value: !Join ["", [GAIES, !Ref EnvType, !Ref InstanceTagName, 04]]
-        - Key: FTI
-          Value: !Ref InstanceHasFTI
+          Value: !Join ["", [!Ref EnvType, !Ref InstanceNamePrefix, 04]]
 
   Instance5:
     Condition: Launch5
@@ -191,17 +176,15 @@ Resources:
           DeviceIndex: '0'
           DeleteOnTermination: 'true'
           SubnetId: !ImportValue
-                  'Fn::Sub': '${VPCStackName}-InternalASubnet'
+                  'Fn::Sub': 'ManagementVPCStack-InternalASubnet'
       ImageId: !Ref AMI
       InstanceType: !Ref InstanceType
       AvailabilityZone: !Select [0, !GetAZs '']
       Tags:
         - Key: Name
-          Value: !Ref InstanceTagName
+          Value: !Ref InstanceNamePrefix
         - Key: Host Name
-          Value: !Join ["", [GAIES, !Ref EnvType, !Ref InstanceTagName, 05]]
-        - Key: FTI
-          Value: !Ref InstanceHasFTI
+          Value: !Join ["", [!Ref EnvType, !Ref InstanceNamePrefix, 05]]
 
   Instance6:
     Condition: Launch6
@@ -215,17 +198,15 @@ Resources:
           DeviceIndex: '0'
           DeleteOnTermination: 'true'
           SubnetId: !ImportValue
-                  'Fn::Sub': '${VPCStackName}-InternalBSubnet'
+                  'Fn::Sub': 'ManagementVPCStack-InternalBSubnet'
       ImageId: !Ref AMI
       InstanceType: !Ref InstanceType
       AvailabilityZone: !Select [1, !GetAZs '']
       Tags:
         - Key: Name
-          Value: !Ref InstanceTagName
+          Value: !Ref InstanceNamePrefix
         - Key: Host Name
-          Value: !Join ["", [GAIES, !Ref EnvType, !Ref InstanceTagName, 06]]
-        - Key: FTI
-          Value: !Ref InstanceHasFTI
+          Value: !Join ["", [!Ref EnvType, !Ref InstanceNamePrefix, 06]]
 
 ################################### OUTPUTS ##################################
 
@@ -235,39 +216,39 @@ Outputs:
     Description: Instance1
     Value: !Ref Instance1
     Export:
-      Name: !Join ["", [GAIES, !Ref EnvType, !Ref InstanceTagName, 01]]
+      Name: !Join ["", [GAIES, !Ref EnvType, !Ref InstanceNamePrefix, 01]]
 
   Instance2:
     Condition: Launch2
     Description: Instance 2
     Value: !Ref Instance2
     Export:
-      Name: !Join ["", [GAIES, !Ref EnvType, !Ref InstanceTagName, 02]]
+      Name: !Join ["", [GAIES, !Ref EnvType, !Ref InstanceNamePrefix, 02]]
 
   Instance3:
     Condition: Launch3
     Description: Instance 3
     Value: !Ref Instance3
     Export:
-      Name: !Join ["", [GAIES, !Ref EnvType, !Ref InstanceTagName, 03]]
+      Name: !Join ["", [GAIES, !Ref EnvType, !Ref InstanceNamePrefix, 03]]
 
   Instance4:
     Condition: Launch4
     Description: Instance 4
     Value: !Ref Instance4
     Export:
-      Name: !Join ["", [GAIES, !Ref EnvType, !Ref InstanceTagName, 04]]
+      Name: !Join ["", [GAIES, !Ref EnvType, !Ref InstanceNamePrefix, 04]]
 
   Instance5:
     Condition: Launch5
     Description: Instance 5
     Value: !Ref Instance5
     Export:
-      Name: !Join ["", [GAIES, !Ref EnvType, !Ref InstanceTagName, 05]]
+      Name: !Join ["", [GAIES, !Ref EnvType, !Ref InstanceNamePrefix, 05]]
 
   Instance6:
     Condition: Launch6
     Description: Instance 6
     Value: !Ref Instance6
     Export:
-      Name: !Join ["", [GAIES, !Ref EnvType, !Ref InstanceTagName, 06]]
+      Name: !Join ["", [GAIES, !Ref EnvType, !Ref InstanceNamePrefix, 06]]

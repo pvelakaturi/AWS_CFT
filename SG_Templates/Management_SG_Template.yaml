@@ -24,11 +24,6 @@ Metadata:
 ########################### PARAMETERS ##################################
 
 Parameters:
-  VPCStackName:
-    #Description: Name of the VPC Stack in which these Security Groups belongs belong to.
-    Type: String
-    AllowedPattern: '[a-zA-Z][-a-zA-Z0-9]*$'
-
   EnvType:
     Type: String
     Default: non-prod
@@ -51,7 +46,7 @@ Resources:
           ToPort: 22
           CidrIp: 0.0.0.0/0
       VpcId: !ImportValue
-              'Fn::Sub': '${VPCStackName}-VPC'
+              'Fn::Sub': 'ManagementVPCStack-VPC'
       Tags:
       - Key: Name
         Value: BastionHost
@@ -69,7 +64,7 @@ Resources:
           ToPort: 22
           CidrIp: 0.0.0.0/0
       VpcId: !ImportValue
-              'Fn::Sub': '${VPCStackName}-VPC'
+              'Fn::Sub': 'ManagementVPCStack-VPC'
       Tags:
       - Key: Name
         Value: Ansible
@@ -87,7 +82,7 @@ Resources:
           ToPort: 22
           CidrIp: 0.0.0.0/0
       VpcId: !ImportValue
-              'Fn::Sub': '${VPCStackName}-VPC'
+              'Fn::Sub': 'ManagementVPCStack-VPC'
       Tags:
       - Key: Name
         Value: Trend
@@ -105,7 +100,7 @@ Resources:
           ToPort: 22
           CidrIp: 0.0.0.0/0
       VpcId: !ImportValue
-              'Fn::Sub': '${VPCStackName}-VPC'
+              'Fn::Sub': 'ManagementVPCStack-VPC'
       Tags:
       - Key: Name
         Value: Centrify
@@ -123,7 +118,7 @@ Resources:
           ToPort: 22
           CidrIp: 0.0.0.0/0
       VpcId: !ImportValue
-              'Fn::Sub': '${VPCStackName}-VPC'
+              'Fn::Sub': 'ManagementVPCStack-VPC'
       Tags:
       - Key: Name
         Value: SecurityTenable
@@ -141,7 +136,7 @@ Resources:
           ToPort: 22
           CidrIp: 0.0.0.0/0
       VpcId: !ImportValue
-              'Fn::Sub': '${VPCStackName}-VPC'
+              'Fn::Sub': 'ManagementVPCStack-VPC'
       Tags:
       - Key: Name
         Value: WSUS
@@ -159,7 +154,7 @@ Resources:
           ToPort: 3389
           CidrIp: 0.0.0.0/0
       VpcId: !ImportValue
-              'Fn::Sub': '${VPCStackName}-VPC'
+              'Fn::Sub': 'ManagementVPCStack-VPC'
       Tags:
       - Key: Name
         Value: AD
@@ -177,7 +172,7 @@ Resources:
           ToPort: 22
           CidrIp: 0.0.0.0/0
       VpcId: !ImportValue
-              'Fn::Sub': '${VPCStackName}-VPC'
+              'Fn::Sub': 'ManagementVPCStack-VPC'
       Tags:
       - Key: Name
         Value: RTC
@@ -195,7 +190,7 @@ Resources:
           ToPort: 22
           CidrIp: 0.0.0.0/0
       VpcId: !ImportValue
-              'Fn::Sub': '${VPCStackName}-VPC'
+              'Fn::Sub': 'ManagementVPCStack-VPC'
       Tags:
       - Key: Name
         Value: Urban Code
@@ -213,7 +208,7 @@ Resources:
           ToPort: 3389
           CidrIp: 0.0.0.0/0
       VpcId: !ImportValue
-              'Fn::Sub': '${VPCStackName}-VPC'
+              'Fn::Sub': 'ManagementVPCStack-VPC'
       Tags:
       - Key: Name
         Value: Remedy
@@ -255,7 +250,7 @@ Outputs:
     Description: Security Group Id for WSUS in Management VPC
     Value: !Ref WSUSSG
     Export:
-      Name: !Sub ${AWS::StackName}-WSUSSG
+      Name: !Sub ${AWS::StackName}-WSUS
 
   ADSG:
     Description: Security Group Id for AD in Management VPC

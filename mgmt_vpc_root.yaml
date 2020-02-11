@@ -7,12 +7,25 @@ Metadata:
     ParameterGroups:
       -
         Label:
-          default: "Management_VPC"
+          default: VPC
         Parameters:
           - VPCName
           - CidrBlock
           - InternalSubnetAZ1CIDR
           - InternalSubnetAZ2CIDR
+      -
+        Label:
+          default: EC2
+        Parameters:
+          - EC2Stack
+          - AMI
+          - InstanceType
+          - InstanceCount
+      -
+        Label:
+          default: S3
+        Parameters:
+          - S3Location
 
     ParameterLabels:
       VPCName:
@@ -23,15 +36,32 @@ Metadata:
         default: CIDR IP for Internal Subnet A. 
       InternalSubnetAZ2CIDR:
         default: CIDR IP for Internal Subnet B.
+      EC2Stack:
+        default: The EC2 stack to install
+      AMI:
+        default: AMI for the instance
+      InstanceType:
+        default: Instance Type for the severs
+      InstanceCount:
+        default: Number of instances to create for the server
+      S3Location:
+        default: Your S3 location to store cloudformation template
 
 ################################PARAMETERS######################################
 
 Parameters:
   S3Location: 
-    Description: Your S3 location to store cloudformation template
+    #Description: Your S3 location to store cloudformation template
     Type: String
-    Default: "https://gaies-mgmt-s3-bucket.s3.amazonaws.com"
+    Default: "https://anil-cft-bucket.s3.amazonaws.com"
     MinLength: 1
+
+  EnvType:
+    Type: String
+    Default: non-prod
+    AllowedValues:
+      - prod
+      - non-prod
 
   VPCName:
     Type: String
@@ -61,31 +91,31 @@ Parameters:
     #Description: CIDR IP for Subnet B
     ConstraintDescription: Must be a valid IP CIDR range orm x.x.x.x/x
 
-  EC2Stack:
-    Type: String
-    Description: The EC2 stack to install
-    AllowedValues:
-      - BastionHost
-      - Ansible
-      - Trend
-      - Centrify
-      - SecurityTenable
-      - WSUS
-      - AD
-      - RTC
-      - UrbanCode
-      - Remedy
+  # EC2Stack:
+  #   Type: String
+  #   #Description: The EC2 stack to install
+  #   AllowedValues:
+  #     - BastionHost
+  #     - Ansible
+  #     - Trend
+  #     - Centrify
+  #     - SecurityTenable
+  #     - WSUS
+  #     - AD
+  #     - RTC
+  #     - UrbanCode
+  #     - Remedy
 
   InstanceCount:
-    Type: String
+    Type: Number
     MinValue: 1
     MaxValue: 6
     Default: 2
-    Description: Number of instances to create for the server
+    #Description: Number of instances to create for the server
   
   AMI: 
     Type: String
-    Description: AMI for the instance
+    #Description: AMI for the instance
 
   InstanceType:
     Type: String
@@ -111,17 +141,17 @@ Parameters:
 
 ############################## CONDITIONS #####################################
 
-Conditions:
-  cBastionHost: !Equals [EC2Stack, BastionHost]
-  cAnsible: !Equals [EC2Stack, Ansible]
-  cTrend: !Equals [EC2Stack, Trend]
-  cCentrify: !Equals [EC2Stack, Centrify]
-  cSecurityTenable: !Equals [EC2Stack, SecurityTenable]
-  cWSUS: !Equals [EC2Stack, SecurityTenable]
-  cAD: !Equals [EC2Stack, AD]
-  cRTC: !Equals [EC2Stack, RTC]
-  cUrbanCode: !Equals [EC2Stack, UrbanCode]
-  cRemedy: !Equals [EC2Stack, Remedy]
+# Conditions:
+#   cBastionHost: !Equals [!Ref EC2Stack, BastionHost]
+#   cAnsible: !Equals [!Ref EC2Stack, Ansible]
+#   cTrend: !Equals [!Ref EC2Stack, Trend]
+#   cCentrify: !Equals [!Ref EC2Stack, Centrify]
+#   cSecurityTenable: !Equals [!Ref EC2Stack, SecurityTenable]
+#   cWSUS: !Equals [!Ref EC2Stack, WSUS]
+#   cAD: !Equals [!Ref EC2Stack, AD]
+#   cRTC: !Equals [!Ref EC2Stack, RTC]
+#   cUrbanCode: !Equals [!Ref EC2Stack, UrbanCode]
+#   cRemedy: !Equals [!Ref EC2Stack, Remedy]
 
 
 ######################################RESOURCES################################
@@ -133,13 +163,13 @@ Resources:
   ManagementVPCStack:
     Type: AWS::CloudFormation::Stack
     Properties:
-      TemplateURL: https://cftbuckettesting92839.s3.amazonaws.com/VPC_Templates/Management_Network_Template.yaml
+      TemplateURL: https://anil-cft-bucket.s3.amazonaws.com/VPC_Templates/Management_Network_Template.yaml
       TimeoutInMinutes: '5'
       Parameters:
         VPCName: !Ref VPCName
         CidrBlock: !Ref CidrBlock
         InternalASubnetCIDR: !Ref InternalSubnetAZ1CIDR
-        InternalBSubnetCIDR: !Ref InternalBSubnetAZ2CIDR
+        InternalBSubnetCIDR: !Ref InternalSubnetAZ2CIDR
 
 
 ###############################SECURITY GROUPS#####################################
@@ -147,8 +177,10 @@ Resources:
   ManagementSGStack:
     Type: AWS::CloudFormation::Stack
     Properties:
-      TemplateURL: https://cftbuckettesting92839.s3.amazonaws.com/SG_Templates/Management_SG_Template.yaml
+      TemplateURL: https://anil-cft-bucket.s3.amazonaws.com/SG_Templates/Management_SG_Template.yaml
       TimeoutInMinutes: '5'
+      Parameters:
+        EnvType: !Ref EnvType
 ###############################IAM Roles#####################################
 
 
@@ -156,9 +188,9 @@ Resources:
 
   BastionHostEC2Stack:
     Type: AWS::CloudFormation::Stack
-    Condition: cBastionHost
+    # Condition: cBastionHost
     Properties:
-      TemplateURL: https://cftbuckettesting92839.s3.amazonaws.com/EC2_Templates/Master_EC2_Template.yaml
+      TemplateURL: https://anil-cft-bucket.s3.amazonaws.com/EC2_Templates/Master_EC2_Template.yaml
       TimeoutInMinutes: '5'
       Parameters:
         VPCStackName: 'ManagementVPCStack'
@@ -172,9 +204,9 @@ Resources:
 
   AnsibleEC2Stack:
     Type: AWS::CloudFormation::Stack
-    Condition: cAnsible
+    # Condition: cAnsible
     Properties:
-      TemplateURL: https://cftbuckettesting92839.s3.amazonaws.com/EC2_Templates/Master_EC2_Template.yaml
+      TemplateURL: https://anil-cft-bucket.s3.amazonaws.com/EC2_Templates/Master_EC2_Template.yaml
       TimeoutInMinutes: '5'
       Parameters:
         VPCStackName: 'ManagementVPCStack'
@@ -188,9 +220,9 @@ Resources:
 
   TrendEC2Stack:
     Type: AWS::CloudFormation::Stack
-    Condition: cTrend
+    # Condition: cTrend
     Properties:
-      TemplateURL: https://cftbuckettesting92839.s3.amazonaws.com/EC2_Templates/Master_EC2_Template.yaml
+      TemplateURL: https://anil-cft-bucket.s3.amazonaws.com/EC2_Templates/Master_EC2_Template.yaml
       TimeoutInMinutes: '5'
       Parameters:
         VPCStackName: 'ManagementVPCStack'
@@ -204,9 +236,9 @@ Resources:
   
   CentrifyEC2Stack:
     Type: AWS::CloudFormation::Stack
-    Condition: cCentrify
+    # Condition: cCentrify
     Properties:
-      TemplateURL: https://cftbuckettesting92839.s3.amazonaws.com/EC2_Templates/Master_EC2_Template.yaml
+      TemplateURL: https://anil-cft-bucket.s3.amazonaws.com/EC2_Templates/Master_EC2_Template.yaml
       TimeoutInMinutes: '5'
       Parameters:
         VPCStackName: 'ManagementVPCStack'
@@ -220,9 +252,9 @@ Resources:
 
   SecurityTenableEC2Stack:
     Type: AWS::CloudFormation::Stack
-    Condition: cSecurityTenable
+    # Condition: cSecurityTenable
     Properties:
-      TemplateURL: https://cftbuckettesting92839.s3.amazonaws.com/EC2_Templates/Master_EC2_Template.yaml
+      TemplateURL: https://anil-cft-bucket.s3.amazonaws.com/EC2_Templates/Master_EC2_Template.yaml
       TimeoutInMinutes: '5'
       Parameters:
         VPCStackName: 'ManagementVPCStack'
@@ -236,9 +268,9 @@ Resources:
 
   WSUSEC2Stack:
     Type: AWS::CloudFormation::Stack
-    Condition: cWSUS
+    # Condition: cWSUS
     Properties:
-      TemplateURL: https://cftbuckettesting92839.s3.amazonaws.com/EC2_Templates/Master_EC2_Template.yaml
+      TemplateURL: https://anil-cft-bucket.s3.amazonaws.com/EC2_Templates/Master_EC2_Template.yaml
       TimeoutInMinutes: '5'
       Parameters:
         VPCStackName: 'ManagementVPCStack'
@@ -252,9 +284,9 @@ Resources:
 
   ADEC2Stack:
     Type: AWS::CloudFormation::Stack
-    Condition: cAD
+    # Condition: cAD
     Properties:
-      TemplateURL: https://cftbuckettesting92839.s3.amazonaws.com/EC2_Templates/Master_EC2_Template.yaml
+      TemplateURL: https://anil-cft-bucket.s3.amazonaws.com/EC2_Templates/Master_EC2_Template.yaml
       TimeoutInMinutes: '5'
       Parameters:
         VPCStackName: 'ManagementVPCStack'
@@ -268,9 +300,9 @@ Resources:
 
   RTCEC2Stack:
     Type: AWS::CloudFormation::Stack
-    Condition: cRTC
+    # Condition: cRTC
     Properties:
-      TemplateURL: https://cftbuckettesting92839.s3.amazonaws.com/EC2_Templates/Master_EC2_Template.yaml
+      TemplateURL: https://anil-cft-bucket.s3.amazonaws.com/EC2_Templates/Master_EC2_Template.yaml
       TimeoutInMinutes: '5'
       Parameters:
         VPCStackName: 'ManagementVPCStack'
@@ -284,9 +316,9 @@ Resources:
   
   UrbanCodeEC2Stack:
     Type: AWS::CloudFormation::Stack
-    Condition: cUrbanCode
+    # Condition: cUrbanCode
     Properties:
-      TemplateURL: https://cftbuckettesting92839.s3.amazonaws.com/EC2_Templates/Master_EC2_Template.yaml
+      TemplateURL: https://anil-cft-bucket.s3.amazonaws.com/EC2_Templates/Master_EC2_Template.yaml
       TimeoutInMinutes: '5'
       Parameters:
         VPCStackName: 'ManagementVPCStack'
@@ -300,9 +332,9 @@ Resources:
   
   RemedyEC2Stack:
     Type: AWS::CloudFormation::Stack
-    Condition: cRemedy
+    # Condition: cRemedy
     Properties:
-      TemplateURL: https://cftbuckettesting92839.s3.amazonaws.com/EC2_Templates/Master_EC2_Template.yaml
+      TemplateURL: https://anil-cft-bucket.s3.amazonaws.com/EC2_Templates/Master_EC2_Template.yaml
       TimeoutInMinutes: '5'
       Parameters:
         VPCStackName: 'ManagementVPCStack'

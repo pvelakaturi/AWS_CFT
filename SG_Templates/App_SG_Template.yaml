@@ -25,7 +25,7 @@ Metadata:
 
 Parameters:
   VPCStackName:
-    #Description: Name of the VPC Stack in which these Security Groups belongs belong to.
+    #Description: Name of the VPC Stack in which these Security Groups belong to.
     Type: String
     AllowedPattern: '[a-zA-Z][-a-zA-Z0-9]*$'
 

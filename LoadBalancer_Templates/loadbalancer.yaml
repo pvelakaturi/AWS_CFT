@@ -1,0 +1,86 @@
+AWSTemplateFormatVersion: 2010-09-09
+Parameters:
+  Subnets:
+    Type: 'List<AWS::EC2::Subnet::Id>'
+    Description: The list of SubnetIds in your Virtual Private Cloud (VPC)
+    ConstraintDescription: >-
+      must be a list of at least two existing subnets associated with at least
+      two different availability zones. They should be residing in the selected
+      Virtual Private Cloud.
+  HealthCheckIntervalSeconds:
+    Type: Number
+    Description: 'The amount of time between health checks of an individual instance, in seconds. Values: 5 to 300'
+  HealthCheckTimeoutSeconds:
+    Type: Number
+    Description: 'The amount of time to wait when receiving a response from the health check, in seconds. Values: 2 to 60'
+  HealthyThresholdCount:
+    Type: Number 
+    Description: 'The number of consecutive successful health checks that must occur before declaring an EC2 instance healthy. Values: 2 to 10'
+  Port:
+    Type: String
+    Description: 'The port to use to connect with the instance, as a protocol: port pair. Ping Protocols: HTTP, HTTPS / Ping port range: 1 to 65535'
+  Protocol:
+    Type: String
+    Description: 'The protocol to use to connect with the instance. Values: HTTP, HTTPS, TCP etc'
+  UnhealthyThresholdCount:
+    Type: Number 
+    Description: 'The number of consecutive failed health checks that must occur before declaring an EC2 instance unhealthy. Values: 2 to 10'
+  StickinessEnabled:
+    Type: String
+    AllowedValues: 
+      - true
+      - false
+  StickinessType:
+    Type: String
+  StickinessDurationSeconds:
+    Type: String
+    
+
+Resources:
+  ApplicationLoadBalancer:
+    Type: 'AWS::ElasticLoadBalancingV2::LoadBalancer'
+    Properties:
+      Subnets: !Ref Subnets
+  ALBListener:
+    Type: 'AWS::ElasticLoadBalancingV2::Listener'
+    Properties:
+      DefaultActions:
+        - Type: forward
+          TargetGroupArn: !Ref ALBTargetGroup
+      LoadBalancerArn: !Ref ApplicationLoadBalancer
+      Port: '80'
+      Protocol: HTTP
+  ALBTargetGroup:
+    Type: 'AWS::ElasticLoadBalancingV2::TargetGroup'
+    Properties:
+      HealthCheckIntervalSeconds: !Ref HealthCheckIntervalSeconds
+      HealthCheckTimeoutSeconds: !Ref HealthCheckTimeoutSeconds
+      HealthyThresholdCount: !Ref HealthyThresholdCount
+      Port: !Ref Port
+      Protocol: !Ref Protocol
+      UnhealthyThresholdCount: !Ref UnhealthyThresholdCount
+      VpcId: !GetAtt
+          - ManagementVPCStack
+          - Outputs.VPC
+      Targets:
+        - Id: !Ref EC2Instance1
+          Port: !Ref Port
+        - Id: !Ref EC2Instance2
+          Port: !Ref Port
+      TargetGroupAttributes:
+        - Key: stickiness.enabled
+          Value: !Ref StickinessEnabled
+        - Key: stickiness.type
+          Value: !Ref StickinessType
+        - Key: stickiness.lb_cookie.duration_seconds
+          Value: !Ref StickinessDurationSeconds
+ 
+Outputs:
+  URL:
+    Description: URL of the sample website
+    Value: !Join 
+      - ''
+      - - 'http://'
+        - !GetAtt 
+          - ApplicationLoadBalancer
+          - DNSName

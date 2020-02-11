@@ -198,8 +198,9 @@ Resources:
         InstanceCount: !Ref InstanceCount
         InstanceNamePrefix: 'gaiesmgmtbastionhost'
         AMI: !Ref AMI
-        InstanceSecurityGroup: !ImportValue
-              'Fn::Sub': 'ManagementSGStack-BastionHost'
+        InstanceSecurityGroup: !GetAtt
+          - ManagementSGStack
+          - Outputs.BastionHostSG
         InstanceType: !Ref InstanceType
 
   AnsibleEC2Stack:
@@ -214,8 +215,9 @@ Resources:
         InstanceCount: !Ref InstanceCount
         InstanceNamePrefix: 'gaiesmgmtansible'
         AMI: !Ref AMI
-        InstanceSecurityGroup: !ImportValue
-              'Fn::Sub': 'ManagementSGStack-Ansible'
+        InstanceSecurityGroup: !GetAtt
+          - ManagementSGStack
+          - Outputs.AnsibleSG
         InstanceType: !Ref InstanceType 
 
   TrendEC2Stack:
@@ -230,8 +232,9 @@ Resources:
         InstanceCount: !Ref InstanceCount
         InstanceNamePrefix: 'gaiesmgmttrend'
         AMI: !Ref AMI
-        InstanceSecurityGroup: !ImportValue
-              'Fn::Sub': 'ManagementSGStack-Trend'
+        InstanceSecurityGroup: !GetAtt
+          - ManagementSGStack
+          - Outputs.TrendSG
         InstanceType: !Ref InstanceType     
   
   CentrifyEC2Stack:
@@ -246,8 +249,9 @@ Resources:
         InstanceCount: !Ref InstanceCount
         InstanceNamePrefix: 'gaiesmgmtcentrify'
         AMI: !Ref AMI
-        InstanceSecurityGroup: !ImportValue
-              'Fn::Sub': 'ManagementSGStack-Centrify'
+        InstanceSecurityGroup: !GetAtt
+          - ManagementSGStack
+          - Outputs.CentrifySG
         InstanceType: !Ref InstanceType
 
   SecurityTenableEC2Stack:
@@ -262,8 +266,9 @@ Resources:
         InstanceCount: !Ref InstanceCount
         InstanceNamePrefix: 'gaiesmgmtsecuritytenable'
         AMI: !Ref AMI
-        InstanceSecurityGroup: !ImportValue
-              'Fn::Sub': 'ManagementSGStack-SecurityTenable'
+        InstanceSecurityGroup: !GetAtt
+          - ManagementSGStack
+          - Outputs.SecurityTenableSG
         InstanceType: !Ref InstanceType
 
   WSUSEC2Stack:
@@ -278,8 +283,9 @@ Resources:
         InstanceCount: !Ref InstanceCount
         InstanceNamePrefix: 'gaiesmgmtwsus'
         AMI: !Ref AMI
-        InstanceSecurityGroup: !ImportValue
-              'Fn::Sub': 'ManagementSGStack-WSUS'
+        InstanceSecurityGroup: !GetAtt
+          - ManagementSGStack
+          - Outputs.WSUSSG
         InstanceType: !Ref InstanceType
 
   ADEC2Stack:
@@ -294,8 +300,9 @@ Resources:
         InstanceCount: !Ref InstanceCount
         InstanceNamePrefix: 'gaiesmgmtad'
         AMI: !Ref AMI
-        InstanceSecurityGroup: !ImportValue
-              'Fn::Sub': 'ManagementSGStack-AD'
+        InstanceSecurityGroup: !GetAtt
+          - ManagementSGStack
+          - Outputs.ADSG
         InstanceType: !Ref InstanceType
 
   RTCEC2Stack:
@@ -310,8 +317,9 @@ Resources:
         InstanceCount: !Ref InstanceCount
         InstanceNamePrefix: 'gaiesmgmtrtc'
         AMI: !Ref AMI
-        InstanceSecurityGroup: !ImportValue
-              'Fn::Sub': 'ManagementSGStack-RTC'
+        InstanceSecurityGroup: !GetAtt
+          - ManagementSGStack
+          - Outputs.RTCSG
         InstanceType: !Ref InstanceType
   
   UrbanCodeEC2Stack:
@@ -326,8 +334,9 @@ Resources:
         InstanceCount: !Ref InstanceCount
         InstanceNamePrefix: 'gaiesmgmtuc'
         AMI: !Ref AMI
-        InstanceSecurityGroup: !ImportValue
-              'Fn::Sub': 'ManagementSGStack-UrbanCode'
+        InstanceSecurityGroup: !GetAtt
+          - ManagementSGStack
+          - Outputs.UrbanCodeSG
         InstanceType: !Ref InstanceType
   
   RemedyEC2Stack:
@@ -342,6 +351,7 @@ Resources:
         InstanceCount: !Ref InstanceCount
         InstanceNamePrefix: 'gaiesmgmtremedy'
         AMI: !Ref AMI
-        InstanceSecurityGroup: !ImportValue
-              'Fn::Sub': 'ManagementSGStack-Remedy'
+        InstanceSecurityGroup: !GetAtt
+          - ManagementSGStack
+          - Outputs.RemedySG
         InstanceType: !Ref InstanceType

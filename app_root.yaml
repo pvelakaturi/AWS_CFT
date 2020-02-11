@@ -46,28 +46,28 @@ Resources:
       TemplateURL: !Join ["",[!Ref S3Location,"SG_Templates/App_SG_Template.yaml"]]
       TimeoutInMinutes: '5'
       Parameters: 
-        VPCStackName: !If [prodVPC, ProdVPCStack, !If [NonprodVPC, NonprodVPCStack, BuildVPCStack]]
+        VPCStackName: !If [prodVPC, ProdVPCStack, !If [NonprodVPC, NonProdVPCStack, BuildVPCStack]]
         Env: !Ref Env
 
 
 ###############################EC2 stacks#####################################
 
-  ProdWPEC2Stack:
+  WPEC2Stack:
     Type: AWS::CloudFormation::Stack
     Properties:
-      TemplateURL: !Join ["",[!Ref S3Location,"EC2_Template/Generic_EC2_Template.yaml"]]
+      TemplateURL: !Join ["",[!Ref S3Location,"EC2_Templates/Generic_EC2_Template.yaml"]]
       TimeoutInMinutes: '5'
       Parameters:
-        VPCStackName: 'ProdVPCStack'
+        VPCStackName: !If [prodVPC, ProdVPCStack, !If [NonprodVPC, NonProdVPCStack, BuildVPCStack]]
         EnvType: !Ref Env 
-        InstanceCount: '2'
-        InstanceType: 'WP'
-        SubnetNameprefix: 'App'
+        InstanceCount: '1'
+        AppModule: 'WP'
+        InstanceHasFTI: false # need to parameterize
+        SubnetNameprefix: !Join ["",[!If [prodVPC, ProdVPCStack, !If [NonprodVPC, NonProdVPCStack, BuildVPCStack]],'App']]
         AMI: 'ami-9be6f38c' # need to parameterize
-        InstanceSecurityGroup: Fn::GetAtt: 
+        InstanceSecurityGroup: !GetAtt 
           - AppSGStack
-          - Outputs
-          - !Join ["-", [!Ref Env,CP-SG]]
+          - Outputs.WorkerPortalSG
         InstanceType: 't3.medium' # need to parameterize
     
   

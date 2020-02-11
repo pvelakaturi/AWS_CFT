@@ -31,10 +31,6 @@ Parameters:
 
   Env:
     Type: String
-    Default: dev
-    AllowedValues: [dev, dev1, dev2, sit, sit1, prod, pre-prod, uat, trn]
-
-
 
 ########################### RESOURCES ##################################
 
@@ -154,45 +150,43 @@ Outputs:
   StackName: 
     Description: get the nested stack names to be referenced in other templates. 
     Value: !Sub ${AWS::StackName}
-    Export:
-      Name: StackName
   CustomerHTTPServerSG:
     Description: Security Group Id for Customer HTTP Server in MarketPlace VPC
     Value: !Ref CustomerHTTPServerSG
     Export:
-      Name: !Join ["-", [!Ref Env,CustomerHTTPServer-SG]]
+      Name: !Sub ${AWS::StackName}-CP-HTTP
 
   WorkerPortalSG:
     Description: Security Group Id for Worker Portal in MarketPlace VPC
     Value: !Ref WorkerPortalSG
     Export:
-      Name: !Join ["-", [!Ref Env,CP-SG]]
+      Name: !Sub ${AWS::StackName}-WP
 
 
   CustomerPortalSG:
     Description: Security Group Id for Customer Portal in MarketPlace VPC
     Value: !Ref CustomerPortalSG
     Export:
-      Name: !Join ["-", [!Ref Env,WP-SG]]
+      Name: !Sub ${AWS::StackName}-CP
 
 
   BatchSG:
     Description: Security Group Id for Batch in MarketPlace VPC
     Value: !Ref BatchSG
     Export:
-      Name: !Join ["-", [!Ref Env,Batch-SG]]
+      Name: !Sub ${AWS::StackName}-Batch
 
 
   SFTPSG:
     Description: Security Group Id for SFTP in MarketPlace VPC
     Value: !Ref SFTPSG
     Export:
-      Name: !Join ["-", [!Ref Env,SFTP-SG]]
+      Name: !Sub ${AWS::StackName}-STFP
 
 
   EnterpriseDBSG:
     Description: Security Group Id for EnterpriseDB in MarketPlace VPC
     Value: !Ref EnterpriseDBSG
     Export:
-      Name: !Join ["-", [!Ref Env,EnterpriseDB-SG]]
+      Name: !Sub ${AWS::StackName}-EnterpriseDB
 

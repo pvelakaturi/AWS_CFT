@@ -7,7 +7,6 @@ Parameters:
     Description: Name of the Security Group Stack in which these Security Groups belongs belong to.
     Type: String
     AllowedPattern: '[a-zA-Z][-a-zA-Z0-9]*$'
-
   EnvType:
     Description: Select a Environment Type
     Type: String
@@ -21,7 +20,6 @@ Parameters:
       - DEV2
       - SIT1
       - SIT2
-
   InstanceCount:
     Description: Number of EC2 instances (must be between 1 and 6).
     Type: Number
@@ -29,7 +27,6 @@ Parameters:
     MinValue: 1
     MaxValue: 6
     ConstraintDescription: Must be a number between 1 and 6.
-
   InstanceType:
     Description: Type of EC2 instance to launch for the server.
     Type: String
@@ -50,22 +47,21 @@ Parameters:
       - r5.4xlarge
       - r5.8xlarge
       - r5.12xlarge
-
-  InstanceType:
+  AppModule:
     Description: Instance Name tag that will be used to define the Name of the instance resource(s)
     Type: String
-
+  SubnetNameprefix:
+    Description: Prefix of the subnet it belongs to
+    Type: String
   InstanceHasFTI:
     Description: Does the Instance have FTI?
     Type: String
     AllowedValues:
       - true
       - false
-
   InstanceSecurityGroup:
     Description: Security Group for the EC2 instance
     Type: AWS::EC2::SecurityGroup::Id
-
   AMI:
     Description: AMI for the instance image
     Type: String
@@ -102,7 +98,7 @@ Resources:
           DeviceIndex: '0'
           DeleteOnTermination: 'true'
           SubnetId: !ImportValue
-                  'Fn::Sub': '${VPCStackName}-InternalASubnet'
+                  'Fn::Sub': '${VPCStackName}-${SubnetNameprefix}ASubnet' 
       ImageId: !Ref AMI
       InstanceType: !Ref InstanceType
       AvailabilityZone: !Select [0, !GetAZs '']
@@ -110,7 +106,7 @@ Resources:
         - Key: InstanceType
           Value: !Ref InstanceType
         - Key: Host Name
-          Value: !Join ["", [gaie, !Ref EnvType, !Ref InstanceType, 01]]
+          Value: !Join ["", [gaie, !Ref EnvType, !Ref AppModule, 01]]
         - Key: FTI
           Value: !Ref InstanceHasFTI
 
@@ -134,7 +130,7 @@ Resources:
         - Key: InstanceType
           Value: !Ref InstanceType
         - Key: Host Name
-          Value: !Join ["", [gaies, !Ref EnvType, !Ref InstanceType, 02]]
+          Value: !Join ["", [gaies, !Ref EnvType, !Ref AppModule, 02]]
         - Key: FTI
           Value: !Ref InstanceHasFTI
 
@@ -158,7 +154,7 @@ Resources:
         - Key: InstanceType
           Value: !Ref InstanceType
         - Key: Host Name
-          Value: !Join ["", [gaies, !Ref EnvType, !Ref InstanceType, 03]]
+          Value: !Join ["", [gaies, !Ref EnvType, !Ref AppModule, 03]]
         - Key: FTI
           Value: !Ref InstanceHasFTI
 
@@ -182,7 +178,7 @@ Resources:
         - Key: InstanceType
           Value: !Ref InstanceType
         - Key: Host Name
-          Value: !Join ["", [gaies, !Ref EnvType, !Ref InstanceType, 04]]
+          Value: !Join ["", [gaies, !Ref EnvType, !Ref AppModule, 04]]
         - Key: FTI
           Value: !Ref InstanceHasFTI
 
@@ -206,7 +202,7 @@ Resources:
         - Key: InstanceType
           Value: !Ref InstanceType
         - Key: Host Name
-          Value: !Join ["", [gaies, !Ref EnvType, !Ref InstanceType, 05]]
+          Value: !Join ["", [gaies, !Ref EnvType, !Ref AppModule, 05]]
         - Key: FTI
           Value: !Ref InstanceHasFTI
 
@@ -230,7 +226,7 @@ Resources:
         - Key: InstanceType
           Value: !Ref InstanceType
         - Key: Host Name
-          Value: !Join ["", [gaies, !Ref EnvType, !Ref InstanceType, 06]]
+          Value: !Join ["", [gaies, !Ref EnvType, !Ref AppModule, 06]]
         - Key: FTI
           Value: !Ref InstanceHasFTI
 
@@ -241,45 +237,45 @@ Outputs:
     Description: get the nested stack names to be referenced in other templates. 
     Value: !Sub ${AWS::StackName}
     Export:
-      Name: StackName
+      Name: !Sub ${AWS::StackName}-StackName
   Instance1:
     Condition: Launch1
     Description: Instance1
     Value: !Ref Instance1
     Export:
-      Name: !Join ["", [gaies, !Ref EnvType, !Ref InstanceType, 01]]
+      Name: !Join ["", [gaies, !Ref EnvType, !Ref AppModule, 01]]
 
   Instance2:
     Condition: Launch2
     Description: Instance 2
     Value: !Ref Instance2
-    Export:
-      Name: !Join ["", [gaies, !Ref EnvType, !Ref InstanceType, 02]]
+    # Export:
+      Name: !Join ["", [gaies, !Ref EnvType, !Ref AppModule, 02]]
 
   Instance3:
     Condition: Launch3
     Description: Instance 3
     Value: !Ref Instance3
-    Export:
-      Name: !Join ["", [gaies, !Ref EnvType, !Ref InstanceType, 03]]
+    # Export:
+      Name: !Join ["", [gaies, !Ref EnvType, !Ref AppModule, 03]]
 
   Instance4:
     Condition: Launch4
     Description: Instance 4
     Value: !Ref Instance4
-    Export:
-      Name: !Join ["", [gaies, !Ref EnvType, !Ref InstanceType, 04]]
+    # Export:
+      Name: !Join ["", [gaies, !Ref EnvType, !Ref AppModule, 04]]
 
   Instance5:
     Condition: Launch5
     Description: Instance 5
     Value: !Ref Instance5
-    Export:
-      Name: !Join ["", [gaies, !Ref EnvType, !Ref InstanceType, 05]]
+    # Export:
+      Name: !Join ["", [gaies, !Ref EnvType, !Ref AppModule, 05]]
 
   Instance6:
     Condition: Launch6
     Description: Instance 6
     Value: !Ref Instance6
-    Export:
-      Name: !Join ["", [gaies, !Ref EnvType, !Ref InstanceType, 06]]
+    # Export:
+      Name: !Join ["", [gaies, !Ref EnvType, !Ref AppModule, 06]]

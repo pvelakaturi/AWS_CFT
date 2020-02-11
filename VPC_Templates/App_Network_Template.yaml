@@ -251,7 +251,7 @@ Outputs:
     Description: get the nested stack names to be referenced in other templates. 
     Value: !Sub ${AWS::StackName}
     Export:
-     Name: StackName
+     Name: !Sub ${AWS::StackName}-StackName
   VPC:
     Description: Management VPC
     Value: !Ref VPC

@@ -27,14 +27,6 @@ Parameters:
 
 ############################## CONDITIONS #####################################
 
-Conditions:
-  prodVPC:
-    !Equals [!Ref Env, prod]
-  NonprodVPC:
-    !Or [!Equals [!Ref Env, pre-prod], !Equals [!Ref Env, UAT], !Equals [!Ref Env, TRN], !Equals [!Ref Env, MM]]
-  BuildVPC:
-    !Or [!Equals [!Ref Env, DEV1], !Equals [!Ref Env, DEV2], !Equals [!Ref Env, SIT1], !Equals [!Ref Env, SIT2]]
-
 ######################################RESOURCES################################
 
 Resources:
@@ -49,7 +41,7 @@ Resources:
       TemplateURL: !Join ["",[!Ref S3Location,"SG_Templates/App_SG_Template.yaml"]]
       TimeoutInMinutes: '5'
       Parameters: 
-        VPCStackName: !If [prodVPC, ProdVPCStack, !If [NonprodVPC, NonProdVPCStack, BuildVPCStack]]
+        VPCStackName: !Ref VPCStackName
         Env: !Ref Env
 
 
@@ -61,34 +53,34 @@ Resources:
       TemplateURL: !Join ["",[!Ref S3Location,"EC2_Templates/Generic_EC2_Template.yaml"]]
       TimeoutInMinutes: '5'
       Parameters:
-        VPCStackName: !If [prodVPC, ProdVPCStack, !If [NonprodVPC, NonProdVPCStack, BuildVPCStack]]
+        VPCStackName: !Ref VPCStackName
         EnvType: !Ref Env 
         InstanceCount: '1'
         AppModule: 'WP'
         InstanceHasFTI: false # need to parameterize
-        SubnetNameprefix: !Join ["",[!If [prodVPC, ProdVPCStack, !If [NonprodVPC, NonProdVPCStack, BuildVPCStack]],'App']]
+        SubnetNameprefix: !Join ["",!Ref VPCStackName,'App']]
         AMI: 'ami-9be6f38c' # need to parameterize
         InstanceSecurityGroup: !GetAtt 
           - AppSGStack
           - Outputs.WorkerPortalSG
         InstanceType: 't3.medium' # need to parameterize
   
-    WPEC2Stack:
-    Type: AWS::CloudFormation::Stack
-    Properties:
-      TemplateURL: !Join ["",[!Ref S3Location,"EC2_Templates/Generic_EC2_Template.yaml"]]
-      TimeoutInMinutes: '5'
-      Parameters:
-        VPCStackName: !If [prodVPC, ProdVPCStack, !If [NonprodVPC, NonProdVPCStack, BuildVPCStack]]
-        EnvType: !Ref Env 
-        InstanceCount: '1'
-        AppModule: 'WP'
-        InstanceHasFTI: false # need to parameterize
-        SubnetNameprefix: !Join ["",[!If [prodVPC, ProdVPCStack, !If [NonprodVPC, NonProdVPCStack, BuildVPCStack]],'App']]
-        AMI: 'ami-9be6f38c' # need to parameterize
-        InstanceSecurityGroup: !GetAtt 
-          - AppSGStack
-          - Outputs.WorkerPortalSG
-        InstanceType: 't3.medium' # need to parameterize
+  # WPEC2Stack:
+  # Type: AWS::CloudFormation::Stack
+  # Properties:
+  #   TemplateURL: !Join ["",[!Ref S3Location,"EC2_Templates/Generic_EC2_Template.yaml"]]
+  #   TimeoutInMinutes: '5'
+  #   Parameters:
+  #     VPCStackName: !Ref VPCStackName
+  #     EnvType: !Ref Env 
+  #     InstanceCount: '1'
+  #     AppModule: 'WP'
+  #     InstanceHasFTI: false # need to parameterize
+  #     SubnetNameprefix: !Join ["",!Ref VPCStackName,'App']]
+  #     AMI: 'ami-9be6f38c' # need to parameterize
+  #     InstanceSecurityGroup: !GetAtt 
+  #       - AppSGStack
+  #       - Outputs.WorkerPortalSG
+  #     InstanceType: 't3.medium' # need to parameterize
     
   

@@ -4,7 +4,7 @@
   connection: local
   gather_facts: false
   vars_files:
-    - "{{vpc_env}}"_vars.yml
+    - vars.yml
   vars:
     aws_region: us-east-1
     env: "{{appenv}}"
@@ -15,6 +15,9 @@
       role_arn: "arn:aws:iam::{{App_Network_Template_params.aws_account_num}}:role/GAIESBuildAccountCFTRole"
       role_session_name: "buildRoleSession"
       region: '{{aws_region}}'
+    tags:
+    - app
+    - network
     register: assumed_role
   - name: Run VPC templates in build account and demo cross account deployments through STS assume roles
     cloudformation:
@@ -37,18 +40,23 @@
         DatabaseBSubnetCIDR: "{{App_Network_Template_params.DatabaseBSubnetCIDR}}"
       tags:
         Stack: "{{App_Network_Template_params.stack_name}}-application-cloudformation-cicd"
+    tags:
+    - network
+    register: vpc_stack
   - name: Run app template build account and demo cross account deployments through STS assume roles
     cloudformation:
       aws_access_key: "{{ assumed_role.sts_creds.access_key }}"
       aws_secret_key: "{{ assumed_role.sts_creds.secret_key }}"
       security_token: "{{ assumed_role.sts_creds.session_token }}"
-      stack_name: "{{App_Network_Template_params.stack_name}}"
+      stack_name: "{{env}}AppStack"
       state: "present"
       region: '{{aws_region}}'
       disable_rollback: true
       template:  "/home/gitlab-runner/builds/G1RPJgRJ/0/root/georgiaies_main/app_root.yaml"
       template_parameters:
         Env: "{{env}}"
-        VPCStackName: "{{vpc_env}}AppStack"
+        VPCStackName: "{{App_Network_Template_params.stack_name}}"
       tags:
         Stack: "{{env}}-application-cloudformation-cicd"
+    tags:
+    - app

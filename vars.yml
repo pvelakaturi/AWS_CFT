@@ -15,5 +15,5 @@ MarketPlace_Network_Template_params:
   stack_name: "ProdMarketPlaceStack"
   VPCName: "ProdMarketPlace"
   CidrBlock: "10.11.0.0/16"
-  SubnetCIDR: "10.11.10.0/24"
-  DMZBSubnetCIDR: "10.11.20.0/24"
+  PrivateSubnetAZ1CIDR: "10.11.10.0/24"
+  PrivateSubnetAZ2CIDR: "10.11.20.0/24"

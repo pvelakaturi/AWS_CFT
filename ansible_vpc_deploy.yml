@@ -3,58 +3,52 @@
   hosts: localhost
   connection: local
   gather_facts: false
-
+  vars_files:
+    - "{{vpc_env}}"_vars.yml
+  vars:
+    aws_region: us-east-1
+    env: "{{appenv}}"
+    vpc_env: "{{vpcenv}}"
   tasks:
-  - name: Run SG CFT to demo local account run
-    cloudformation:
-      stack_name: "AppSGStack"
-      state: "present"
-      region: "us-east-1"
-      disable_rollback: true
-      template: "/home/gitlab-runner/builds/G1RPJgRJ/0/root/georgiaies_main/SG_Templates/App_SG_Template.yaml"
-      template_parameters:
-        VPCStackName: "ManagementVPCStack"
-        Env: "dev"
-      tags:
-        Stack: "SG-ansible-cloudformation"
-  - name: assume the build role in another account
+  - name: assume the build role in the App Network account specific to the environment
     sts_assume_role:
-      role_arn: "arn:aws:iam::069962244880:role/GAIESBuildAccountCFTRole"
+      role_arn: "arn:aws:iam::{{App_Network_Template_params.aws_account_num}}:role/GAIESBuildAccountCFTRole"
       role_session_name: "buildRoleSession"
-      region: us-east-1
+      region: '{{aws_region}}'
     register: assumed_role
   - name: Run VPC templates in build account and demo cross account deployments through STS assume roles
     cloudformation:
       aws_access_key: "{{ assumed_role.sts_creds.access_key }}"
       aws_secret_key: "{{ assumed_role.sts_creds.secret_key }}"
       security_token: "{{ assumed_role.sts_creds.session_token }}"
-      stack_name: "ProdVPCStack"
+      stack_name: "{{App_Network_Template_params.stack_name}}"
       state: "present"
-      region: "us-east-1"
+      region: '{{aws_region}}'
       disable_rollback: true
       template:  "/home/gitlab-runner/builds/G1RPJgRJ/0/root/georgiaies_main/VPC_Templates/App_Network_Template.yaml"
       template_parameters:
-        VPCName: "ProdVPC"
-        CidrBlock: "10.10.0.0/16"
-        DMZASubnetCIDR: "10.10.10.0/24"
-        DMZBSubnetCIDR: "10.10.20.0/24"
-        AppASubnetCIDR: "10.10.30.0/24"
-        AppBSubnetCIDR: "10.10.40.0/24"
-        DatabaseASubnetCIDR: "10.10.50.0/24"
-        DatabaseBSubnetCIDR: "10.10.60.0/24"
+        VPCName: "{{App_Network_Template_params.VPCName}}"
+        CidrBlock: "{{App_Network_Template_params.CidrBlock}}"
+        DMZASubnetCIDR: "{{App_Network_Template_params.DMZASubnetCIDR}}"
+        DMZBSubnetCIDR: "{{App_Network_Template_params.DMZBSubnetCIDR}}"
+        AppASubnetCIDR: "{{App_Network_Template_params.AppASubnetCIDR}}"
+        AppBSubnetCIDR: "{{App_Network_Template_params.AppBSubnetCIDR}}"
+        DatabaseASubnetCIDR: "{{App_Network_Template_params.DatabaseASubnetCIDR}}"
+        DatabaseBSubnetCIDR: "{{App_Network_Template_params.DatabaseBSubnetCIDR}}"
       tags:
-        Stack: "prod-application-cloudformation-cicd"
+        Stack: "{{App_Network_Template_params.stack_name}}-application-cloudformation-cicd"
   - name: Run app template build account and demo cross account deployments through STS assume roles
     cloudformation:
       aws_access_key: "{{ assumed_role.sts_creds.access_key }}"
       aws_secret_key: "{{ assumed_role.sts_creds.secret_key }}"
       security_token: "{{ assumed_role.sts_creds.session_token }}"
-      stack_name: "ProdAppStack"
+      stack_name: "{{App_Network_Template_params.stack_name}}"
       state: "present"
-      region: "us-east-1"
+      region: '{{aws_region}}'
       disable_rollback: true
       template:  "/home/gitlab-runner/builds/G1RPJgRJ/0/root/georgiaies_main/app_root.yaml"
       template_parameters:
-        Env: "prod"
+        Env: "{{env}}"
+        VPCStackName: "{{vpc_env}}AppStack"
       tags:
-        Stack: "prod-application-cloudformation-cicd"
+        Stack: "{{env}}-application-cloudformation-cicd"

@@ -1,0 +1,23 @@
+App_Network_Template_params:
+  aws_account_num: "069962244880"
+  stack_name: "ProdVPCStack"
+  VPCName: "ProdVPC"
+  CidrBlock: "10.10.0.0/16"
+  DMZASubnetCIDR: "10.10.10.0/24"
+  DMZBSubnetCIDR: "10.10.20.0/24"
+  AppASubnetCIDR: "10.10.30.0/24"
+  AppBSubnetCIDR: "10.10.40.0/24"
+  DatabaseASubnetCIDR: "10.10.50.0/24"
+  DatabaseBSubnetCIDR: "10.10.60.0/24"
+
+MarketPlace_Network_Template_params:
+  aws_account_num: "069962244880"
+  stack_name: "ProdMarketPlaceStack"
+  VPCName: "ProdMarketPlace"
+  CidrBlock: "10.11.0.0/16"
+  DMZASubnetCIDR: "10.11.10.0/24"
+  DMZBSubnetCIDR: "10.11.20.0/24"
+  AppASubnetCIDR: "10.11.30.0/24"
+  AppBSubnetCIDR: "10.11.40.0/24"
+  DatabaseASubnetCIDR: "10.11.50.0/24"
+  DatabaseBSubnetCIDR: "10.11.60.0/24"

@@ -21,6 +21,9 @@ Parameters:
       - DEV2
       - SIT1
       - SIT2
+  VPCStackName: 
+    Description: VPC Stack to which it should be associated to 
+    Type: String
 
 ############################## CONDITIONS #####################################
 
@@ -53,6 +56,24 @@ Resources:
 ###############################EC2 stacks#####################################
 
   WPEC2Stack:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: !Join ["",[!Ref S3Location,"EC2_Templates/Generic_EC2_Template.yaml"]]
+      TimeoutInMinutes: '5'
+      Parameters:
+        VPCStackName: !If [prodVPC, ProdVPCStack, !If [NonprodVPC, NonProdVPCStack, BuildVPCStack]]
+        EnvType: !Ref Env 
+        InstanceCount: '1'
+        AppModule: 'WP'
+        InstanceHasFTI: false # need to parameterize
+        SubnetNameprefix: !Join ["",[!If [prodVPC, ProdVPCStack, !If [NonprodVPC, NonProdVPCStack, BuildVPCStack]],'App']]
+        AMI: 'ami-9be6f38c' # need to parameterize
+        InstanceSecurityGroup: !GetAtt 
+          - AppSGStack
+          - Outputs.WorkerPortalSG
+        InstanceType: 't3.medium' # need to parameterize
+  
+    WPEC2Stack:
     Type: AWS::CloudFormation::Stack
     Properties:
       TemplateURL: !Join ["",[!Ref S3Location,"EC2_Templates/Generic_EC2_Template.yaml"]]

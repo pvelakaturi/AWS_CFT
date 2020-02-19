@@ -82,20 +82,6 @@ Resources:
       - Key: Name
         Value: !Ref VPCName
 
-  InternetGateway:
-    Type: AWS::EC2::InternetGateway
-    DependsOn: VPC
-    Properties:
-      Tags:
-      - Key: Name
-        Value: !Sub ${VPCName}-InternetGateway
-
-  VPCGatewayAttachment:
-    Type: AWS::EC2::VPCGatewayAttachment
-    Properties:
-      VpcId: !Ref VPC
-      InternetGatewayId: !Ref InternetGateway
-
 ########################## SUBNETS ###############################
 
   DMZASubnet:
@@ -157,94 +143,6 @@ Resources:
       Tags:
       - Key: Name
         Value: DatabaseSubnetB
-
-############################## ROUTE TABLES ##################################
-
-  DMZARouteTable:
-    Type: AWS::EC2::RouteTable
-    Properties:
-      VpcId: !Ref VPC
-      Tags:
-        - Key: Name
-          Value: DMZ Route Table A
-
-  DMZBRouteTable:
-    Type: AWS::EC2::RouteTable
-    Properties:
-      VpcId: !Ref VPC
-      Tags:
-        - Key: Name
-          Value: DMZ Route Table B
-
-  AppARouteTable:
-    Type: AWS::EC2::RouteTable
-    Properties:
-      VpcId: !Ref VPC
-      Tags:
-        - Key: Name
-          Value: App Route Table A
-
-  AppBRouteTable:
-    Type: AWS::EC2::RouteTable
-    Properties:
-      VpcId: !Ref VPC
-      Tags:
-        - Key: Name
-          Value: App Route Table B
-
-  DatabaseARouteTable:
-    Type: AWS::EC2::RouteTable
-    Properties:
-      VpcId: !Ref VPC
-      Tags:
-        - Key: Name
-          Value: Database Route Table A
-
-  DatabaseBRouteTable:
-    Type: AWS::EC2::RouteTable
-    Properties:
-      VpcId: !Ref VPC
-      Tags:
-        - Key: Name
-          Value: Database Route Table B
-
-##################### ROUTE TABLE ASSOCIATION ################################
-
-  DMZARouteTableAssociation:
-    Type: AWS::EC2::SubnetRouteTableAssociation
-    Properties:
-      SubnetId: !Ref DMZASubnet
-      RouteTableId: !Ref DMZARouteTable
-
-  DMZBRouteTableAssociation:
-    Type: AWS::EC2::SubnetRouteTableAssociation
-    Properties:
-      SubnetId: !Ref DMZBSubnet
-      RouteTableId: !Ref DMZBRouteTable
-
-  AppARouteTableAssociation:
-    Type: AWS::EC2::SubnetRouteTableAssociation
-    Properties:
-      SubnetId: !Ref AppASubnet
-      RouteTableId: !Ref AppARouteTable
-
-  AppBRouteTableAssociation:
-    Type: AWS::EC2::SubnetRouteTableAssociation
-    Properties:
-      SubnetId: !Ref AppBSubnet
-      RouteTableId: !Ref AppBRouteTable
-
-  DatabaseARouteTableAssociation:
-    Type: AWS::EC2::SubnetRouteTableAssociation
-    Properties:
-      SubnetId: !Ref DatabaseASubnet
-      RouteTableId: !Ref DatabaseARouteTable
-
-  DatabaseBRouteTableAssociation:
-    Type: AWS::EC2::SubnetRouteTableAssociation
-    Properties:
-      SubnetId: !Ref DatabaseBSubnet
-      RouteTableId: !Ref DatabaseBRouteTable
 
 Outputs:
   StackName: 
